@@ -21,6 +21,7 @@ See [[Troubleshooting]] when things don't work!
 #+END_SRC
 
 * Useful Commands
+
 | Command                           | Action                                                   |
 |-----------------------------------+----------------------------------------------------------|
 | M-x describe-personal-keybindings | Shows every keybinding created using use-package's :bind |
@@ -36,7 +37,7 @@ The init.el turns this config.org into a config.el, which is loaded on start up.
 #+end_src
 
 ** use-package
-This configuration uses the [[https://github.com/jwiegley/use-package][use-package]] package from John Wiegley, which is a way to manage package configurations.
+This configuration uses the [[https://github.com/jwiegley/use-package][use-package]] package from John Wiegley, which manages package configurations.
 YouTube presentation - [[https://www.youtube.com/watch?v=2TSKxxYEbII][Emacs package highlight: use-package]].
 #+begin_src emacs-lisp
 ;;; Bootstrap use-package
@@ -50,7 +51,9 @@ YouTube presentation - [[https://www.youtube.com/watch?v=2TSKxxYEbII][Emacs pack
   (require 'use-package))
 #+end_src
 
-** Add files to emacs-d directory
+** Helper Functions
+
+*** Add files to emacs-d directory
 
 #+BEGIN_SRC emacs-lisp
 (defun add-to-emacs-d (f)
@@ -81,6 +84,7 @@ As disk space is cheap, save often.
 (setq vc-make-backup-files t)
 (setq auto-save-file-name-transforms '((".*" "~/.emacs.d/auto-save-list/" t)))
 #+end_src
+
 ** History
 From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.html
 #+BEGIN_SRC emacs-lisp
@@ -94,20 +98,19 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
        search-ring
         regexp-search-ring))
 #+END_SRC
-** Diminished Modes
-[[http://www.emacswiki.org/emacs/DiminishedModes][Diminished Modes]] - [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] lets you fight clutter by removing or abbreviating minor mode indicators
 
+** Diminished Modes
+[[http://www.emacswiki.org/emacs/DiminishedModes][Diminished Modes]] - [[http://www.eskimo.com/~seldon/diminish.el][diminish.el]] removes or abbreviates minor mode indicators in the bottom bar.
 #+BEGIN_SRC emacs-lisp
 (use-package diminish
   :ensure t
   :config
   (progn
     (eval-after-load "whitespace" '(diminish 'whitespace-mode))))
-
 #+END_SRC
 
 ** Character encoding
-Use [[https://en.wikipedia.org/wiki/UTF-8][UTF-8]]
+Use [[https://en.wikipedia.org/wiki/UTF-8][UTF-8]] character encoding when possible.
 #+begin_src emacs-lisp
 (setq locale-coding-system 'utf-8)
 (set-terminal-coding-system 'utf-8)
@@ -128,7 +131,7 @@ Including:
   (tool-bar-mode -1)
   (menu-bar-mode 1))
 
-;; Stop beeping! (Was irritating when hitting C-g)
+;; Stop beeping! (when hitting C-g)
 (setq visible-bell t)
 #+END_SRC
 
@@ -142,17 +145,28 @@ TODO - can something useful be done here?
 (setq inhibit-splash-screen t)
 #+END_SRC
 
-* Set Modifier keys, such as Super, per OS
-See [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Define Super & Hyper Keys]] for more details and options
+* Set Modifier keys, such as Super, Meta, Hyper, Apps per OS
+See [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Define Super & Hyper Keys]] and http://www.emacswiki.org/emacs/PrefixKey for more details and options
+
+** Guide to Prefixes
+C- Ctrl/Control
+M- Meta/Alt
+S- Shift
+s- Super/Windows/Win/Command
+H- Hyper
+A- Apps
+
 ** Windows
-make keyboard's Win key type Super for emacs running on Windows.
+Make keyboard's Windows key type act as Super modifier.
+Single tap Windows key still brings up Start menu.
+Window shortcut keys should still work too.
 #+BEGIN_SRC emacs-lisp
 (setq w32-pass-lwindow-to-system nil)
 (setq w32-lwindow-modifier 'super) ; Left Windows key
 #+END_SRC
 
 ** TODO Mac OS X
-set keys for Apple keyboard, for emacs in OS X
+Set keys for Apple keyboard, for emacs in OS X
 #+BEGIN_SRC emacs-lisp
 ;;(setq mac-command-modifier 'meta) ; make cmd key do Meta
 ;;(setq mac-option-modifier 'super) ; make opt key do Super
@@ -161,7 +175,7 @@ set keys for Apple keyboard, for emacs in OS X
 #+END_SRC
 
 ** Linux (Needs configuring in the OS, not in emacs)
-By default, the Win key is Super.
+By default, the Windows key is Super.
 On Linuxes, you should define Super & Hyper key in the OS. 
 For example, in Ubuntu 11.04, it's under System >> Preferences >> keyboard, then "Layout" tap, "Options..." button.
 
@@ -301,8 +315,15 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 * Programming
 ** paredit
 "[[https://twitter.com/kentbeck/status/311983951218630656][I'm ready to try an editor that only allows]] [[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]] transformations" - [[https://en.wikipedia.org/wiki/Kent_Beck][Kent Beck]]
-
 [[https://www.youtube.com/watch?v=D6h5dFyyUX0][Emacs Rocks! Episode 14: Paredit]]
+http://overtone.github.io/emacs-live/doc-clojure-paredit.html
+[[http://www.emacswiki.org/emacs/PareditCheatsheet][Paredit Cheatsheet]]
+[[http://danmidwood.com/content/2014/11/21/animated-paredit.html][The Animated Guide to Paredit]]
+
+** Smartparens
+https://github.com/Fuco1/smartparens/wiki/Paredit-and-smartparens
+[[https://www.youtube.com/watch?v%3DykjRUr7FgoI][Smartparens - smart editing of paired expressions 1 of 2]]
+[[https://www.youtube.com/watch?v%3DefSvfqf3Ykw][Smartparens - smart editing of paired expressions 2 of 2]]
 
 ** Clojure
 *** Clojure
@@ -397,6 +418,7 @@ The :config keyword specifies code to be executed after the package is loaded. H
 ;; (setq cider-prompt-save-file-on-load nil)
 
 #+end_src
+
 https://ccann.github.io/2015/11/05/cider-workflow/:
 Hot CIDER Commands
 05 November 2015
@@ -451,7 +473,30 @@ https://github.com/m0smith/malabar-mode[2]
 http://www.emacswiki.org/emacs/EmacsEclim[3]  
 http://www.troikatech.com/blog/2014/11/26/ensime-and-emacs-as-a-scala-ide[4]  
 
-** TODO JavaScript
+** ON-TRIAL JavaScript
+[[https://github.com/mooz/js2-mode][js2-mode]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode
+  :ensure t
+  :defer t
+  :commands js2-mode
+  :init
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+    (setq-default js2-basic-offset 2)
+    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode)))
+  :config
+  (progn
+    (js2-imenu-extras-setup)
+    (bind-key "C-x C-e" 'js-send-last-sexp js2-mode-map)
+    (bind-key "C-M-x" 'js-send-last-sexp-and-go js2-mode-map)
+    (bind-key "C-c b" 'js-send-buffer js2-mode-map)
+    (bind-key "C-c C-b" 'js-send-buffer-and-go js2-mode-map)
+    (bind-key "C-c w" 'my/copy-javascript-region-or-buffer js2-mode-map)
+    (bind-key "C-c l" 'js-load-file-and-go js2-mode-map)))
+#+END_SRC
+
 ** TODO XSLT
 ** TODO HTML
 ** TODO Ruby
@@ -495,8 +540,11 @@ https://github.com/krobertson/emacs.d/blob/master/packages.el
 https://github.com/aki2o/org-ac
 
 #+BEGIN_SRC emacs-lisp
+;;Complete explicitly by binding a key
+
 (use-package auto-complete
   :diminish auto-complete-mode
+;; :bind ("C-TAB" . auto-complete-mode)
   :config
   (progn
     (use-package go-autocomplete)
@@ -520,7 +568,7 @@ https://github.com/aki2o/org-ac
   :init (org-ac/config-default))
 #+END_SRC
 
-** ON-TRIAL Ace Jump Mode
+** ACCEPTED Ace Jump Mode
 A quick way to jump around text in buffers.
 
 [[http://emacsrocks.com/e10.html][See Emacs Rocks Episode 10 for a screencast]].
@@ -533,7 +581,7 @@ A quick way to jump around text in buffers.
 
 #+END_SRC
 
-** ON-TRIAL Helm
+** ACCEPTED Helm
  http://tuhdo.github.io/helm-intro.html
 #+BEGIN_SRC emacs-lisp
 (use-package helm
@@ -566,17 +614,31 @@ A quick way to jump around text in buffers.
          ("C-x c SPC" . helm-all-mark-rings)))
 #+END_SRC
 
-** TODO Projectile
+** ON-TRIAL Projectile
+[[http://batsov.com/projectile/][Projectile Home]]
 [[http://wikemacs.org/wiki/Projectile]["Projectile]] is project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies."
 Projectile - works with Lein projects
-#+BEGIN_SRC emacs-lisp
 
+ If you want to mark a folder manually as a project just create an empty .projectile file in it.
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :defer t
+  :diminish projectile-mode
+  :config
+  (progn
+    (setq projectile-keymap-prefix (kbd "C-c p"))
+    (setq projectile-completion-system 'default)
+    (setq projectile-enable-caching t)
+    (projectile-global-mode)))
 #+END_SRC
 
-** TODO Helm Projectile
+** ON-TRIAL Helm Projectile
 [[http://tuhdo.github.io/helm-projectile.html][Helm projectile]] guide
 #+BEGIN_SRC emacs-lisp
-
+(use-package helm-projectile
+   :defer t :ensure t
+   :ensure helm-projectile)
 #+END_SRC
 
 ** TODO Squiggly-clojure - Flycheck checker for Clojure
@@ -604,15 +666,42 @@ The default keys are 1-9, but it's faster to access the keys on the home row, so
 ;;  :bind ("s-o" . ace-window))
 #+END_SRC
 
-** TODO HTML Mode/ HTMLModeDeluxe / Emacs WebDev Environment
+** ON-TRIAL HTML Mode/ Web-Mode HTMLModeDeluxe / Emacs WebDev Environment
 [[http://www.emacswiki.org/cgi-bin/wiki/HtmlModeDeluxe][HTMLModeDeluxe]]
 [[http://www.dzr-web.com/people/darren/projects/emacs-webdev][Emacs WebDev Environment]]
 [[http://www.nongnu.org/baol-hth][HTML Helper Mode]]
-** TODO XML
-** TODO css-mode
+
+[[http://web-mode.org/][Web-mode]]
 #+BEGIN_SRC emacs-lisp
-;;(use-package css-mode
-;;  :mode ("\\.css\\'" . css-mode))
+(use-package web-mode
+  :ensure t
+  :defer t
+  :mode "\\.html?\\'"
+  :config
+  (progn
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-ac-sources-alist
+          '(("css" . (ac-source-css-property))
+            ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
+          )))
+#+END_SRC
+
+** ON-TRIAL XML
+
+#+BEGIN_SRC emacs-lisp
+(use-package nxml-mode
+  :mode (("\\.xml$" . nxml-mode)
+         ("\\.xslt$" . nxml-mode))
+  :config
+  (add-hook 'nxml-mode-hook
+	    (lambda ()
+	      (setq indent-tabs-mode nil))))
+#+END_SRC
+
+** ON-TRIAL css-mode
+#+BEGIN_SRC emacs-lisp
+(use-package css-mode
+  :mode ("\\.css\\'" . css-mode))
 #+END_SRC
 
 ** TODO SQL
@@ -627,6 +716,16 @@ M-x sql-ms
 http://pragmaticemacs.com/emacs/dont-search-swipe/
 [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
 
+** TODO RSS
+** TODO email
+http://www.emacswiki.org/emacs/CategoryMail
+http://www.emacswiki.org/emacs/mu4e
+https://github.com/iqbalansari/mu4e-alert
+
+
+
+** TODO Presentations
+[[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
 
 ** TODO Code folding
 [[https://github.com/mrkkrp/vimish-fold/][vimish-fold]] fancier than [[http://www.emacswiki.org/emacs/HideShow][Hide/Show]]
@@ -679,6 +778,27 @@ Its original inspiration is the 'explorer' often used in modern development envi
 ** TODO Yet another Snippet
 [[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
 * Org Mode Settings
+
+#+BEGIN_SRC emacs-lisp
+;;(use-package org
+;;  :ensure t
+;;  :defer t
+;;  :init
+;;  (setq org-replace-disputed-keys t
+;;        org-default-notes-file (expand-file-name "notes.org" (getenv "HOME")))
+;;  :config
+;;  (org-babel-do-load-languages
+;;   'org-babel-load-languages
+;;   '((awk . t)
+;;     (emacs-lisp . t)
+;;     (python . t)
+;;     (ruby . t)
+;;     (sh . t))))
+
+#+END_SRC
+
+
+
 ** Word wrap
 
 #+BEGIN_SRC 
@@ -699,9 +819,7 @@ enabled Flyspell-mode by default whenever in org-mode
 #+END_SRC
 
 * TODOs
-** TODO I know C- M- S- s- H- prefixes. What is A- 
-Apps - see http://www.emacswiki.org/emacs/PrefixKey
-
+Look at http://emacs.sexy
 ** TODO Confirm :disabled t keyword in use-package disables configuration
 This is useful so I don't need to comment out code
 and I can keep any rejected config in case it becomes useful in the future.
