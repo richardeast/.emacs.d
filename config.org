@@ -161,8 +161,13 @@ Make keyboard's Windows key type act as Super modifier.
 Single tap Windows key still brings up Start menu.
 Window shortcut keys should still work too.
 #+BEGIN_SRC emacs-lisp
-(setq w32-pass-lwindow-to-system nil)
-(setq w32-lwindow-modifier 'super) ; Left Windows key
+(cond
+  ((eq system-type 'windows-nt)
+    (setq w32-pass-lwindow-to-system nil)
+    (setq w32-pass-rwindow-to-system nil)
+    (setq w32-lwindow-modifier 'super) ; Left Windows Key
+    (setq w32-rwindow-modifier 'super) ; Right Windows Key
+  ))
 #+END_SRC
 
 ** TODO Mac OS X
@@ -172,6 +177,17 @@ Set keys for Apple keyboard, for emacs in OS X
 ;;(setq mac-option-modifier 'super) ; make opt key do Super
 ;;(setq mac-control-modifier 'control) ; make Control key do Control
 ;;(setq ns-function-modifier 'hyper)  ; make Fn key do Hyper
+
+;;I set the right option/alt key to the system default so I can insert special characters the old-fashioned way using the right option/alt key -- e.g., Spanish vowels with accents. The left option/alt key remains as meta.
+;;(cond
+;;  ((eq system-type 'darwin)
+;;    (setq ns-alternate-modifier 'meta)
+;;    (setq ns-right-alternate-modifier 'none)
+;;    (setq ns-command-modifier 'super)
+;;    (setq ns-right-command-modifier 'left)
+;;    (setq ns-control-modifier 'control)
+;;    (setq ns-right-control-modifier 'left)
+;;    (setq ns-function-modifier 'none)))
 #+END_SRC
 
 ** Linux (Needs configuring in the OS, not in emacs)
@@ -207,6 +223,10 @@ It has been known to stop arrow keys working under x-term
 #+BEGIN_SRC emacs-lisp
 (global-set-key (kbd "M-o") 'other-window)
 #+END_SRC
+
+** TODO Duplicate lines
+http://www.emacswiki.org/emacs/CopyingWholeLines
+http://emacsblog.org/2009/05/18/copying-lines-not-killing/
 
 * Themes
 Custom themes are collections of settings that can be enabled or disabled as a unit. You can use Custom themes to switch easily between various collections of settings, and to transfer such collections from one computer to another.
@@ -284,6 +304,8 @@ Taken from [[https://github.com/danielmai/.emacs.d/blob/master/config.org][Danie
 
 ** TODO Select Theme per mode
 ** TODO Create own theme
+** TODO Replace Colorthemes
+[[https://github.com/emacs-jp/replace-colorthemes/]]
 * Spelling
 ** Flyspell							  :WindowsOS:
 *** TODO Aspell Install instructions
@@ -301,6 +323,50 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 
 #+END_SRC
 
+* Text Expansion
+** ON-TRIAL Auto-Complete
+https://www.youtube.com/watch?v=rGVVnDxwJYE
+http://emacswiki.org/emacs/AutoComplete
+http://emacs-fu.blogspot.co.uk/2010/10/auto-complete-mode.html
+https://github.com/krobertson/emacs.d/blob/master/packages.el
+https://github.com/aki2o/org-ac
+
+#+BEGIN_SRC emacs-lisp
+;;Complete explicitly by binding a key
+
+(use-package auto-complete
+  :diminish auto-complete-mode
+;; :bind ("C-TAB" . auto-complete-mode)
+  :config
+  (progn
+    (use-package go-autocomplete)
+    (add-to-list 'ac-dictionary-directories (add-to-emacs-d "ac-dict"))
+    (setq ac-use-fuzzy t
+          ac-disable-inline t
+          ac-use-menu-map t
+          ac-auto-show-menu t
+          ac-auto-start t
+          ac-flyspell-workaround t
+          ac-ignore-case t
+          ac-candidate-menu-min 0)
+    (add-to-list 'ac-modes 'enh-ruby-mode)
+    (add-to-list 'ac-modes 'web-mode)
+    (add-to-list 'ac-modes 'go-mode)
+    (add-to-list 'ac-modes 'clojure-mode)))
+
+(use-package org-ac 
+  :defer t 
+  :ensure t
+  :init (org-ac/config-default))
+#+END_SRC
+** TODO Hippie Expand
+** TODO YASnippet Yet Another Snippet
+[[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
+** Abbrev
+** DAbbrev or dynamic abbreviations
+** Skeletons
+** Tempo
+** Autoinsert
 * Source Control
 ** Magit
 [[http://magit.vc/about.html][Magit]] is an interface to the [[https://en.wikipedia.org/wiki/Version_control][version control system]] [[http://git-scm.com/][Git]].
@@ -319,7 +385,7 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 http://overtone.github.io/emacs-live/doc-clojure-paredit.html
 [[http://www.emacswiki.org/emacs/PareditCheatsheet][Paredit Cheatsheet]]
 [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][The Animated Guide to Paredit]]
-
+[[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands]]
 ** Smartparens
 https://github.com/Fuco1/smartparens/wiki/Paredit-and-smartparens
 [[https://www.youtube.com/watch?v%3DykjRUr7FgoI][Smartparens - smart editing of paired expressions 1 of 2]]
@@ -419,6 +485,7 @@ The :config keyword specifies code to be executed after the package is loaded. H
 
 #+end_src
 
+[[https://ccann.github.io/2015/10/18/cider/][A Basic CIDER Configuraiton with use-package]]
 https://ccann.github.io/2015/11/05/cider-workflow/:
 Hot CIDER Commands
 05 November 2015
@@ -532,42 +599,6 @@ TODO figure out how to have own NeoTree theme for opening/closing folders.
 )
 #+END_SRC
 
-** ON-TRIAL Auto-Complete
-https://www.youtube.com/watch?v=rGVVnDxwJYE
-http://emacswiki.org/emacs/AutoComplete
-http://emacs-fu.blogspot.co.uk/2010/10/auto-complete-mode.html
-https://github.com/krobertson/emacs.d/blob/master/packages.el
-https://github.com/aki2o/org-ac
-
-#+BEGIN_SRC emacs-lisp
-;;Complete explicitly by binding a key
-
-(use-package auto-complete
-  :diminish auto-complete-mode
-;; :bind ("C-TAB" . auto-complete-mode)
-  :config
-  (progn
-    (use-package go-autocomplete)
-    (add-to-list 'ac-dictionary-directories (add-to-emacs-d "ac-dict"))
-    (setq ac-use-fuzzy t
-          ac-disable-inline t
-          ac-use-menu-map t
-          ac-auto-show-menu t
-          ac-auto-start t
-          ac-flyspell-workaround t
-          ac-ignore-case t
-          ac-candidate-menu-min 0)
-    (add-to-list 'ac-modes 'enh-ruby-mode)
-    (add-to-list 'ac-modes 'web-mode)
-    (add-to-list 'ac-modes 'go-mode)
-    (add-to-list 'ac-modes 'clojure-mode)))
-
-(use-package org-ac 
-  :defer t 
-  :ensure t
-  :init (org-ac/config-default))
-#+END_SRC
-
 ** ACCEPTED Ace Jump Mode
 A quick way to jump around text in buffers.
 
@@ -646,6 +677,15 @@ Projectile - works with Lein projects
 ** TODO Eastwood (a Clojure lint)
 
 ** TODO Display command-log
+
+** TODO PDF viewers
+
+*** TODO Linux only
+https://github.com/politza/pdf-tools
+https://www.reddit.com/r/emacs/comments/3p9so8/linux_only_much_better_mode_for_viewing_pdfs_than/
+
+** TODO Beacon
+[[https://github.com/Malabarba/beacon][Beacon, github]] - A light that follows your cursor around so you don't lose it! (Looks better than it sounds) 
 ** TODO Ace-isearch
 #+BEGIN_SRC emacs-lisp
 ;;(use-package ace-isearch
@@ -710,6 +750,8 @@ M-x sql-ms
 
 ** TODO IDO
 [[https://www.masteringemacs.org/article/introduction-to-ido-mode][Introduction to Ido Mode]]
+https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/
+
 ** TODO Ivy / Swipper
 [[http://oremacs.com/2015/04/16/ivy-mode/][Ivy]] is an alternative to Ido mode
 
@@ -721,8 +763,7 @@ http://pragmaticemacs.com/emacs/dont-search-swipe/
 http://www.emacswiki.org/emacs/CategoryMail
 http://www.emacswiki.org/emacs/mu4e
 https://github.com/iqbalansari/mu4e-alert
-
-
+http://emacs-fu.blogspot.co.uk/2012/08/introducing-mu4e-for-email.html
 
 ** TODO Presentations
 [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
@@ -771,13 +812,14 @@ scroll the main window by dragging the highlighted area in the minibar.
 You can configure the size/readability of the sidebar freely by specifying the font familiy and height.
 ** TODO Org-mode and Confluence integration
 ** TODO Jira
+** TODO Jenkins
+https://github.com/rmuslimov/jenkins.el
 ** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]] -
 It's an older alternative to neotree
 Speedbar is a program for Emacs which can be used to summarize information related to the current buffer.
 Its original inspiration is the 'explorer' often used in modern development environments, office packages, and web browsers.
-** TODO Yet another Snippet
-[[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
 * Org Mode Settings
+[[http://www.star.bris.ac.uk/bjm/org-basics.html]]
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package org
@@ -796,8 +838,6 @@ Its original inspiration is the 'explorer' often used in modern development envi
 ;;     (sh . t))))
 
 #+END_SRC
-
-
 
 ** Word wrap
 
