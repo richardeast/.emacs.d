@@ -11,7 +11,7 @@ It uses the use-package package/macro that makes the loading of packages more re
 for more advantages and use cases.
 
 See [[Troubleshooting]] when things don't work!
-+Tested+ tried in OSes: Windows 7 only :(
++Tested+ tried in OSes: Windows 7, Ubuntu 15.10
 
 * Personal Information
 #+BEGIN_SRC emacs-lisp
@@ -136,25 +136,25 @@ Including:
 #+END_SRC
 
 ** TODO scroll-bar-mode seems to kill visiblity of the minibuffer commands, such as C-x and M-x :WindowsOS:
-* Set up startup-screen
-Remove the initial start up message, with the Emacs Logo.
-TODO - can something useful be done here?
-#+BEGIN_SRC emacs-lisp
-;;(setq initial-scratch-message "")
-(setq inhibit-startup-message t)
-(setq inhibit-splash-screen t)
-#+END_SRC
 
 * Set Modifier keys, such as Super, Meta, Hyper, Apps per OS
 See [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Define Super & Hyper Keys]] and http://www.emacswiki.org/emacs/PrefixKey for more details and options
 
 ** Guide to Prefixes
-C- Ctrl/Control
-M- Meta/Alt
-S- Shift
-s- Super/Windows/Win/Command
-H- Hyper
-A- Apps
+|-----+---------------------------|
+| Key | Name                      |
+|-----+---------------------------|
+| Esc | Escape                    |
+| M-  | Meta/Alt                  |
+| A-  | Apps*                     |
+| C-  | Ctrl/Control              |
+| S-  | Shift                     |
+| s-  | Super/Windows/Win/Command |
+| H-  | Hyper*                    |
+|-----+---------------------------|
+  *Not in use often because modern keyboards do not have the same modifier keys used in the 70's.
+  If you use Hyper and Apps, try to also have other mappings doing the same function.
+
 
 ** Windows
 Make keyboard's Windows key type act as Super modifier.
@@ -214,19 +214,162 @@ This makes sentence navigation commands work with one space.
 ;;  :idle (winner-mode 1))
 #+END_SRC
 
-** Move between windows
-From [[https://www.masteringemacs.org][Mastering Emacs]] - "[...] to move between windows use the command C-x o.
-I find it useful to rebind it to M-o as it's such a common thing
-to do. Add this to your init file:"
+** TODO Duplicate lines
+ - http://www.emacswiki.org/emacs/CopyingWholeLines
+ - http://emacsblog.org/2009/05/18/copying-lines-not-killing/
 
-It has been known to stop arrow keys working under x-term
+* Navigation
+** ACCEPTED NeoTree
+ - http://www.emacswiki.org/emacs/NeoTree
+ - https://github.com/jaypei/emacs-neotree
+
+NeoTree is just a navigation view, similar to Eclipse's nav.
+It's useful for browsing directory structure of a project.
+It's slower finding and opening files than Helm or Ido mode.
+Use Dired for editing/renaming/deleting files.
+It's a useful addition to the toolbox, especially if you are more used to an ide.
+
+Useful Keys
+| Key | Action                         |
+|-----+--------------------------------|
+| F8  | Toggle NeoTree                 |
+| H   | Show hidden files, directories |
+|     |                                |
+
+TODO figure out how to have own NeoTree theme for opening/closing folders.
 #+BEGIN_SRC emacs-lisp
-(global-set-key (kbd "M-o") 'other-window)
+(use-package neotree
+  :ensure t
+  :bind ([f8] . neotree-toggle)
+  :config
+  (progn
+    (setq neo-theme 'arrow)) ; 'classic, 'nerd, 'ascii, 'arrow
+)
 #+END_SRC
 
-** TODO Duplicate lines
-http://www.emacswiki.org/emacs/CopyingWholeLines
-http://emacsblog.org/2009/05/18/copying-lines-not-killing/
+** ACCEPTED Ace Jump Mode
+A quick way to jump around text in buffers.
+
+[[http://emacsrocks.com/e10.html][See Emacs Rocks Episode 10 for a screencast]].
+#+BEGIN_SRC emacs-lisp
+(use-package ace-jump-mode
+  :ensure t
+  :diminish ace-jump-mode
+  :commands ace-jump-mode
+  :bind ("C-S-s" . ace-jump-mode))
+
+#+END_SRC
+
+** ACCEPTED Helm
+ - http://tuhdo.github.io/helm-intro.html
+ - [[https://github.com/emacs-helm/helm/wiki][https://github.com/emacs-helm/helm/wiki]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package helm
+  :ensure t
+  :diminish helm-mode
+  :init
+  (progn
+    (require 'helm-config)
+    (setq helm-candidate-number-limit 100)
+    ;; From https://gist.github.com/antifuchs/9238468
+    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
+          helm-input-idle-delay 0.01  ; this actually updates things
+                                      ; relatively quickly.
+          helm-yas-display-key-on-candidate t
+          helm-quick-update t
+          helm-M-x-requires-pattern nil
+          helm-ff-skip-boring-files t)
+    (helm-mode))
+  :bind (("C-c h" . helm-mini)
+         ("C-h a" . helm-apropos)
+         ("C-x C-b" . helm-buffers-list)
+         ("C-x b"   . helm-buffers-list)
+         ("M-y" . helm-show-kill-ring)
+         ("M-x" . helm-M-x)
+         ("C-x c o" . helm-occur)
+         ("C-x c s" . helm-swoop)
+         ("C-x c y" . helm-yas-complete)
+         ("C-x c Y" . helm-yas-create-snippet-on-region)
+         ("C-x c b" . my/helm-do-grep-book-notes)
+         ("C-x c SPC" . helm-all-mark-rings)))
+#+END_SRC
+
+** ON-TRIAL Projectile
+[[http://batsov.com/projectile/][Projectile Home]]
+[[http://wikemacs.org/wiki/Projectile]["Projectile]] is project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies."
+Projectile - works with Lein projects
+
+ If you want to mark a folder manually as a project just create an empty .projectile file in it.
+#+BEGIN_SRC emacs-lisp
+(use-package projectile
+  :ensure t
+  :defer t
+  :diminish projectile-mode
+  :config
+  (progn
+    (setq projectile-keymap-prefix (kbd "C-c p"))
+    (setq projectile-completion-system 'default)
+    (setq projectile-enable-caching t)
+    (projectile-global-mode)))
+#+END_SRC
+
+** ON-TRIAL Helm Projectile
+[[http://tuhdo.github.io/helm-projectile.html][Helm projectile]] guide
+#+BEGIN_SRC emacs-lisp
+(use-package helm-projectile
+   :defer t :ensure t
+   :ensure helm-projectile)
+#+END_SRC
+
+** ON-TRIAL <<Ace Window>>
+From Daniel Mai's:
+"[[https://github.com/abo-abo/ace-window][ace-window]] is a package that uses the same idea from ace-jump-mode for buffer navigation, but applies it to windows. 
+The default keys are 1-9, but it's faster to access the keys on the home row," 
+Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard][Dvorak]].
+#+BEGIN_SRC emacs-lisp
+(defvar dvorak-left-home-row '(?a ?o ?e ?u ?i))
+(defvar dvorak-right-home-row '(?h ?t ?n ?s)) ;; ?d is omitted. Though on the home row, it requires additional movement. 
+(use-package ace-window
+  :ensure t
+  :config
+  (setq aw-keys (append dvorak-right-home-row dvorak-left-home-row)) ;; keys are set to the Dvorak home row.
+  (ace-window-display-mode)
+  :bind ("M-o" . ace-window))
+#+END_SRC
+
+** TODO Ace-isearch
+#+BEGIN_SRC emacs-lisp
+;;(use-package ace-isearch
+;;  :config
+;;  (global-ace-isearch-mode 1))
+#+END_SRC
+
+** TODO Avy
+ - http://emacsredux.com/blog/2015/07/19/ace-jump-mode-is-dead-long-live-avy/
+** TODO Hydra
+ - https://github.com/abo-abo/hydra
+** TODO IDO
+ - [[https://www.masteringemacs.org/article/introduction-to-ido-mode][Introduction to Ido Mode]]
+ - https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/
+
+** TODO Ivy / Swipper
+[[http://oremacs.com/2015/04/16/ivy-mode/][Ivy]] is an alternative to Ido mode
+
+ - http://pragmaticemacs.com/emacs/dont-search-swipe/
+ - [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
+
+** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]]
+It's an older alternative to neotree
+Speedbar is a program for Emacs which can be used to summarize information related to the current buffer.
+Its original inspiration is the 'explorer' often used in modern development environments, office packages, and web browsers.
+** REJECTED Move between windows
+Replaced with [[Ace Window]]
+[[https://www.masteringemacs.org][Mastering Emacs]] recommends rebinding C-x o to M-o as one will want to move windows often.
+(But it has been known to stop arrow keys working under x-term)
+;; #+BEGIN_SRC emacs-lisp
+;; (global-set-key (kbd "M-o") 'other-window)
+;; #+END_SRC
 
 * Themes
 Custom themes are collections of settings that can be enabled or disabled as a unit. You can use Custom themes to switch easily between various collections of settings, and to transfer such collections from one computer to another.
@@ -274,7 +417,7 @@ The [[https://github.com/oneKelvinSmith/monokai-emacs][Monokai theme]] is s a po
 Created with [[http://emacs-theme-creator.appspot.com/][Emacs Theme Creator]].
 
 #+begin_src emacs-lisp
-(use-package white-sand-theme
+(use-package cyberpunk-theme
   :init
   :ensure t)
 #+end_src
@@ -306,6 +449,15 @@ Taken from [[https://github.com/danielmai/.emacs.d/blob/master/config.org][Danie
 ** TODO Create own theme
 ** TODO Replace Colorthemes
 [[https://github.com/emacs-jp/replace-colorthemes/]]
+** TODO Control transparency
+Useful for seeing what's behind the screen, so good for live coding effects
+ - http://emacs.stackexchange.com/questions/5944/is-there-a-transparent-theme
+ - http://emacs-fu.blogspot.co.uk/2009/02/transparent-emacs.html (This may not work in all environments)
+
+Examples of why it may be useful:
+ - https://skillsmatter.com/skillscasts/3552-live-programming-with-clojure
+ - http://blog.josephwilk.net/art/live-coding-repl-electric.html
+
 * Spelling
 ** Flyspell							  :WindowsOS:
 *** TODO Aspell Install instructions
@@ -325,11 +477,11 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 
 * Text Expansion
 ** ON-TRIAL Auto-Complete
-https://www.youtube.com/watch?v=rGVVnDxwJYE
-http://emacswiki.org/emacs/AutoComplete
-http://emacs-fu.blogspot.co.uk/2010/10/auto-complete-mode.html
-https://github.com/krobertson/emacs.d/blob/master/packages.el
-https://github.com/aki2o/org-ac
+ - https://www.youtube.com/watch?v=rGVVnDxwJYE
+ - http://emacswiki.org/emacs/AutoComplete
+ - http://emacs-fu.blogspot.co.uk/2010/10/auto-complete-mode.html
+ - https://github.com/krobertson/emacs.d/blob/master/packages.el
+ - https://github.com/aki2o/org-ac
 
 #+BEGIN_SRC emacs-lisp
 ;;Complete explicitly by binding a key
@@ -359,6 +511,16 @@ https://github.com/aki2o/org-ac
   :ensure t
   :init (org-ac/config-default))
 #+END_SRC
+** ON-TRIAL Expand Region
+ - [[https://github.com/magnars/expand-region.el][expand-region.el]]
+ - [[https://www.youtube.com/watch?v=_RvHz3vJ3kA][watch @emacsrock on Expand Region]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package expand-region
+  :ensure t
+  :bind ("C-=" . er/expand-region))
+#+END_SRC
+
 ** TODO Hippie Expand
 ** TODO YASnippet Yet Another Snippet
 [[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
@@ -367,6 +529,7 @@ https://github.com/aki2o/org-ac
 ** Skeletons
 ** Tempo
 ** Autoinsert
+** Company mode ?
 * Source Control
 ** Magit
 [[http://magit.vc/about.html][Magit]] is an interface to the [[https://en.wikipedia.org/wiki/Version_control][version control system]] [[http://git-scm.com/][Git]].
@@ -378,18 +541,40 @@ https://github.com/aki2o/org-ac
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
 #+END_SRC
 
+* Shell / EShell / Terminal / Command Line / Command Prompt
+ - [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs: An Overview]]
+ - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]] 
+ - [[https://www.youtube.com/watch?v=U2Rl23-_ePw][YouTube: .Emacs #7 - The Command Line]]
+* File Managers and file system explorers
+** TODO Sunrise Commander
+A file manager inspired by [[https://en.wikipedia.org/wiki/Norton_Commander][Norton Commander]] and [[https://en.wikipedia.org/wiki/Midnight_Commander][Mignight Commander]].
+ - http://www.emacswiki.org/emacs/Sunrise_Commander
+ - http://www.emacswiki.org/emacs/Sunrise_Commander_Tips
+ - http://www.emacswiki.org/emacs/Sunrise_Commander_For_Noobs
+
+** TODO dired 
+** TODO lusty-explorer
+[[http://www.emacswiki.org/emacs/LustyExplorer][LustyExplorer]] is a fast and responsive way to manage files and buffers. 
+It includes both a filesystem explorer and a buffer switcher through a common interface.
+
+It's like find-file crossed with [[http://www.emacswiki.org/emacs/IswitchBuffers][iswitchb]] or [[http://www.emacswiki.org/emacs/InteractivelyDoThings][InteractivelyDoThings (ido)]], 
+but with a larger and more easily readable dedicated window for matches instead of the minibuffer.
+
 * Programming
 ** paredit
-"[[https://twitter.com/kentbeck/status/311983951218630656][I'm ready to try an editor that only allows]] [[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]] transformations" - [[https://en.wikipedia.org/wiki/Kent_Beck][Kent Beck]]
-[[https://www.youtube.com/watch?v=D6h5dFyyUX0][Emacs Rocks! Episode 14: Paredit]]
-http://overtone.github.io/emacs-live/doc-clojure-paredit.html
-[[http://www.emacswiki.org/emacs/PareditCheatsheet][Paredit Cheatsheet]]
-[[http://danmidwood.com/content/2014/11/21/animated-paredit.html][The Animated Guide to Paredit]]
-[[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands]]
+#+BEGIN_QUOTE
+"[[https://twitter.com/kentbeck/status/311983951218630656][I'm ready to try an editor that only allows]] [[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]] transformations" -- [[https://en.wikipedia.org/wiki/Kent_Beck][Kent Beck]]
+#+END_QUOTE
+
+ - [[https://www.youtube.com/watch?v=D6h5dFyyUX0][Emacs Rocks! Episode 14: Paredit]]
+ - http://overtone.github.io/emacs-live/doc-clojure-paredit.html
+ - [[http://www.emacswiki.org/emacs/PareditCheatsheet][Paredit Cheatsheet]]
+ - [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][The Animated Guide to Paredit]]
+ - [[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands]]
 ** Smartparens
-https://github.com/Fuco1/smartparens/wiki/Paredit-and-smartparens
-[[https://www.youtube.com/watch?v%3DykjRUr7FgoI][Smartparens - smart editing of paired expressions 1 of 2]]
-[[https://www.youtube.com/watch?v%3DefSvfqf3Ykw][Smartparens - smart editing of paired expressions 2 of 2]]
+ - https://github.com/Fuco1/smartparens/wiki/Paredit-and-smartparens
+ - [[https://www.youtube.com/watch?v%3DykjRUr7FgoI][Smartparens - smart editing of paired expressions 1 of 2]]
+ - [[https://www.youtube.com/watch?v%3DefSvfqf3Ykw][Smartparens - smart editing of paired expressions 2 of 2]]
 
 ** Clojure
 *** Clojure
@@ -488,11 +673,12 @@ The :config keyword specifies code to be executed after the package is loaded. H
 [[https://ccann.github.io/2015/10/18/cider/][A Basic CIDER Configuraiton with use-package]]
 https://ccann.github.io/2015/11/05/cider-workflow/:
 Hot CIDER Commands
-05 November 2015
+
 When I first started using CIDER I was intimidated by the block of 41 cider-mode and 25 cider-repl-mode interactive commands (to be fair, there's a lot of overlap between the two). Luckily you only need a small subset of these commands at your fingertips to be very productive:
 
 REPLs and Namespaces
-Open a project file (created with Leiningen or Boot) and in that buffer C-c M-j to launch an nREPL server and corresponding REPL client. This client will be associated with your project. You can see the nREPL server in the mode line
+Open a project file (created with Leiningen or Boot) and in that buffer C-c M-j to launch an nREPL server and corresponding REPL client. This client will be associated with your project. You can see the nREPL server in the mode line:
+*All Clojure cider[clj:demo@51099]*
 
 You're done with your REPL and you want to quit: C-c C-q. This is one of those commands I wish I'd seen earlier. I spent so much time killing nREPL buffers manually.
 
@@ -506,6 +692,10 @@ Evaluating Functions
 Load your current buffer with C-c C-k. You can do form evaluation a few different ways, here are the basics:
 
 Eval the form to the left of the point (cursor) and show the result inline with C-c C-e
+  (map #(*% %) (take 10 (range))) => (0 1 2 3 4 5 6 7 8 9)
+
+Eval the top-level form at point and show the result inline with C-c C-c:
+  (map #(*% %) (take 10 (range))) => (0 1 4 9 16 25 36 49 64 81)
 
 Bonus: Try C-c C-p and C-c C-f for pretty-printed popup buffer versions of the previous two evals, respectively. Useful for copying output.
 
@@ -535,10 +725,10 @@ Does not load - only tried in Windows.
 ** TODO Java
 Eclim 
 eclim is the best solution for now: https://github.com/xiaohanyu/oh-my-emacs/blob/master/modules/ome-java.org
-http://jdee.sourceforge.net/[1]  
-https://github.com/m0smith/malabar-mode[2]  
-http://www.emacswiki.org/emacs/EmacsEclim[3]  
-http://www.troikatech.com/blog/2014/11/26/ensime-and-emacs-as-a-scala-ide[4]  
+ - http://jdee.sourceforge.net/
+ - https://github.com/m0smith/malabar-mode
+ - http://www.emacswiki.org/emacs/EmacsEclim
+ - http://www.troikatech.com/blog/2014/11/26/ensime-and-emacs-as-a-scala-ide
 
 ** ON-TRIAL JavaScript
 [[https://github.com/mooz/js2-mode][js2-mode]]
@@ -568,150 +758,31 @@ http://www.troikatech.com/blog/2014/11/26/ensime-and-emacs-as-a-scala-ide[4]
 ** TODO HTML
 ** TODO Ruby
 ** TODO ColdFusion
-* To try
-Popular packages: https://emacs.zeef.com/ehartc
-
-** ON-TRIAL NeoTree
-http://www.emacswiki.org/emacs/NeoTree
-https://github.com/jaypei/emacs-neotree
-
-NeoTree is just a navigation view, similar to Eclipse's nav
-It's useful for viewing folder structure of a project.
-It's probable slower finding and opening files than Helm or Ido mode.
-Use Dired for editing/renaming/deleting files.
-It's a useful addition to the toolbox, especially if you are more used to an ide.
-
-Useful Keys
-| Key | Action                         |
-|-----+--------------------------------|
-| F8  | Toggle NeoTree                 |
-| H   | Show hidden files, directories |
-|     |                                |
-
-TODO figure out how to have own NeoTree theme for opening/closing folders.
+* Databases
+** TODO SQL
+M-x sql-ms
+** MongoDB
+* Data formats (XML, Jason, etc.)
+** ON-TRIAL XML
 #+BEGIN_SRC emacs-lisp
-(use-package neotree
-  :ensure t
-  :bind ([f8] . neotree-toggle)
+(use-package nxml-mode
+  :mode (("\\.xml$" . nxml-mode)
+         ("\\.xslt$" . nxml-mode))
   :config
-  (progn
-    (setq neo-theme 'arrow)) ; 'classic, 'nerd, 'ascii, 'arrow
-)
+  (add-hook 'nxml-mode-hook
+	    (lambda ()
+	      (setq indent-tabs-mode nil))))
 #+END_SRC
 
-** ACCEPTED Ace Jump Mode
-A quick way to jump around text in buffers.
-
-[[http://emacsrocks.com/e10.html][See Emacs Rocks Episode 10 for a screencast]].
-#+BEGIN_SRC emacs-lisp
-(use-package ace-jump-mode
-  :ensure t
-  :diminish ace-jump-mode
-  :commands ace-jump-mode
-  :bind ("C-S-s" . ace-jump-mode))
-
-#+END_SRC
-
-** ACCEPTED Helm
- http://tuhdo.github.io/helm-intro.html
-#+BEGIN_SRC emacs-lisp
-(use-package helm
-  :ensure t
-  :diminish helm-mode
-  :init
-  (progn
-    (require 'helm-config)
-    (setq helm-candidate-number-limit 100)
-    ;; From https://gist.github.com/antifuchs/9238468
-    (setq helm-idle-delay 0.0 ; update fast sources immediately (doesn't).
-          helm-input-idle-delay 0.01  ; this actually updates things
-                                      ; relatively quickly.
-          helm-yas-display-key-on-candidate t
-          helm-quick-update t
-          helm-M-x-requires-pattern nil
-          helm-ff-skip-boring-files t)
-    (helm-mode))
-  :bind (("C-c h" . helm-mini)
-         ("C-h a" . helm-apropos)
-         ("C-x C-b" . helm-buffers-list)
-         ("C-x b"   . helm-buffers-list)
-         ("M-y" . helm-show-kill-ring)
-         ("M-x" . helm-M-x)
-         ("C-x c o" . helm-occur)
-         ("C-x c s" . helm-swoop)
-         ("C-x c y" . helm-yas-complete)
-         ("C-x c Y" . helm-yas-create-snippet-on-region)
-         ("C-x c b" . my/helm-do-grep-book-notes)
-         ("C-x c SPC" . helm-all-mark-rings)))
-#+END_SRC
-
-** ON-TRIAL Projectile
-[[http://batsov.com/projectile/][Projectile Home]]
-[[http://wikemacs.org/wiki/Projectile]["Projectile]] is project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies."
-Projectile - works with Lein projects
-
- If you want to mark a folder manually as a project just create an empty .projectile file in it.
-#+BEGIN_SRC emacs-lisp
-(use-package projectile
-  :ensure t
-  :defer t
-  :diminish projectile-mode
-  :config
-  (progn
-    (setq projectile-keymap-prefix (kbd "C-c p"))
-    (setq projectile-completion-system 'default)
-    (setq projectile-enable-caching t)
-    (projectile-global-mode)))
-#+END_SRC
-
-** ON-TRIAL Helm Projectile
-[[http://tuhdo.github.io/helm-projectile.html][Helm projectile]] guide
-#+BEGIN_SRC emacs-lisp
-(use-package helm-projectile
-   :defer t :ensure t
-   :ensure helm-projectile)
-#+END_SRC
-
-** TODO Squiggly-clojure - Flycheck checker for Clojure
-** TODO Slamhound 
-** TODO Eastwood (a Clojure lint)
-
-** TODO Display command-log
-
-** TODO PDF viewers
-
-*** TODO Linux only
-https://github.com/politza/pdf-tools
-https://www.reddit.com/r/emacs/comments/3p9so8/linux_only_much_better_mode_for_viewing_pdfs_than/
-
-** TODO Beacon
-[[https://github.com/Malabarba/beacon][Beacon, github]] - A light that follows your cursor around so you don't lose it! (Looks better than it sounds) 
-** TODO Ace-isearch
-#+BEGIN_SRC emacs-lisp
-;;(use-package ace-isearch
-;;  :config
-;;  (global-ace-isearch-mode 1))
-#+END_SRC
-
-** TODO Ace Window
-From Daniel Mai's:
-"[[https://github.com/abo-abo/ace-window][ace-window]] is a package that uses the same idea from ace-jump-mode for buffer navigation, but applies it to windows. 
-The default keys are 1-9, but it's faster to access the keys on the home row, so that's what I have them set to (with respect to Dvorak, of course)."
-#+BEGIN_SRC emacs-lisp
-;;(use-package ace-window
-;;  :ensure t
-;;  :config
-;;  (setq aw-keys '(?a ?o ?e ?u ?h ?t ?n ?s))
-;;  (ace-window-display-mode)
-;;  :bind ("s-o" . ace-window))
-#+END_SRC
-
+** TODO JSON
+* Web development
 ** ON-TRIAL HTML Mode/ Web-Mode HTMLModeDeluxe / Emacs WebDev Environment
-[[http://www.emacswiki.org/cgi-bin/wiki/HtmlModeDeluxe][HTMLModeDeluxe]]
-[[http://www.dzr-web.com/people/darren/projects/emacs-webdev][Emacs WebDev Environment]]
-[[http://www.nongnu.org/baol-hth][HTML Helper Mode]]
+ - [[http://www.emacswiki.org/cgi-bin/wiki/HtmlModeDeluxe][HTMLModeDeluxe]]
+ - [[http://www.dzr-web.com/people/darren/projects/emacs-webdev][Emacs WebDev Environment]]
+ - [[http://www.nongnu.org/baol-hth][HTML Helper Mode]]
 
-[[http://web-mode.org/][Web-mode]]
+TODO maybe clashing with css mode.
+ - [[http://web-mode.org/][Web-mode]]
 #+BEGIN_SRC emacs-lisp
 (use-package web-mode
   :ensure t
@@ -726,44 +797,54 @@ The default keys are 1-9, but it's faster to access the keys on the home row, so
           )))
 #+END_SRC
 
-** ON-TRIAL XML
-
-#+BEGIN_SRC emacs-lisp
-(use-package nxml-mode
-  :mode (("\\.xml$" . nxml-mode)
-         ("\\.xslt$" . nxml-mode))
-  :config
-  (add-hook 'nxml-mode-hook
-	    (lambda ()
-	      (setq indent-tabs-mode nil))))
-#+END_SRC
-
 ** ON-TRIAL css-mode
 #+BEGIN_SRC emacs-lisp
 (use-package css-mode
   :mode ("\\.css\\'" . css-mode))
 #+END_SRC
 
-** TODO SQL
-M-x sql-ms
-** TODO JSON
+* To try
+Popular packages: https://emacs.zeef.com/ehartc
 
-** TODO IDO
-[[https://www.masteringemacs.org/article/introduction-to-ido-mode][Introduction to Ido Mode]]
-https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/
+** TODO Squiggly-clojure - Flycheck checker for Clojure
+** TODO Slamhound 
+** TODO Eastwood (a Clojure lint)
+** TODO Display command-log
+** TODO PDF viewers
 
-** TODO Ivy / Swipper
-[[http://oremacs.com/2015/04/16/ivy-mode/][Ivy]] is an alternative to Ido mode
+*** TODO Linux only
+https://github.com/politza/pdf-tools
+https://www.reddit.com/r/emacs/comments/3p9so8/linux_only_much_better_mode_for_viewing_pdfs_than/
+** TODO remember current session files
+ - http://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
+ - https://www.reddit.com/r/emacs/comments/3rzy03/access_the_last_environment_i_have_left/
 
-http://pragmaticemacs.com/emacs/dont-search-swipe/
-[[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
+#+BEGIN_SRC emacs-lisp
+;; (desktop-save-mode 1) ; save/restore opened files
+;; 
+;; ;; remember cursor position
+;; (require 'saveplace)
+;; (setq-default save-place t)
+;; 
+;; ;; Save minibuffer history
+;; (savehist-mode 1)
+#+END_SRC
+
+** TODO Beacon
+[[https://github.com/Malabarba/beacon][Beacon, github]] - A light that follows your cursor around so you don't lose it! (Looks better than it sounds) 
+** TODO Encrypt text
+http://www.emacswiki.org/emacs/EasyPG
 
 ** TODO RSS
 ** TODO email
-http://www.emacswiki.org/emacs/CategoryMail
-http://www.emacswiki.org/emacs/mu4e
-https://github.com/iqbalansari/mu4e-alert
-http://emacs-fu.blogspot.co.uk/2012/08/introducing-mu4e-for-email.html
+ - http://www.emacswiki.org/emacs/CategoryMail
+ - http://www.emacswiki.org/emacs/mu4e
+ - https://github.com/iqbalansari/mu4e-alert
+ - http://emacs-fu.blogspot.co.uk/2012/08/introducing-mu4e-for-email.html
+ - https://www.reddit.com/r/emacs/comments/3rk4cg/emacs_and_email/
+ - http://vxlabs.com/2015/01/28/sending-emails-with-math-and-source-code/
+ - http://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
+ - https://www.reddit.com/r/emacs/comments/3s5fas/which_email_client_mu4e_mutt_notmuch_gnus_do_you/
 
 ** TODO Presentations
 [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
@@ -773,19 +854,24 @@ http://emacs-fu.blogspot.co.uk/2012/08/introducing-mu4e-for-email.html
 
 ** TODO folds
 ** TODO Copy-code
+
 ** TODO Focus
 Focus provides focus-mode that dims the text of surrounding sections, similar to iA Writer's Focus Mode.
 https://github.com/larstvei/Focus/blob/master/README.md
 
 ** TODO Crosshairs
 ** TODO cursors mode
+
+** TODO diff-mode
 ** TODO cursor-cng
 ** TODO dedicated
 ** TODO emacsism
 https://github.com/ChillarAnand/emacsism/blob/master/emacsism.md
+** TODO Reddit mode
+https://github.com/death/reddit-mode
+** TODO Stack Exchange
+https://github.com/vermiculus/sx.el
 
-** TODO diff-mode
-** TODO dired 
 ** TODO mic-paren or paren
 #+BEGIN_SRC emacs-lisp
 ;;(or  (use-package mic-paren
@@ -800,10 +886,13 @@ https://github.com/ChillarAnand/emacsism/blob/master/emacsism.md
 
 ** TODO per-window-point
 ** TODO Multiple cursors mode
-** TODO lusty-explorer
+
 ** TODO llvm-mode
 ** TODO lua-mode
 ** TODO Spacemacs
+ - https://github.com/syl20bnr/spacemacs
+ - http://jr0cket.co.uk/2015/08/spacemacs-first-impressions-from-an-emacs-driven-developer.html
+
 ** TODO [[http://www.emacswiki.org/emacs/MiniMap][MiniMap]]
 Minimap is a feature provided by the Sublime editor. It shows a smaller, "minibar" display of the current buffer alongside
 the main editing window. In the minibar window, it highlights the portion of the buffer that is currently visible
@@ -811,13 +900,28 @@ in the main window. This highlight position is updated automatically, as you nav
 scroll the main window by dragging the highlighted area in the minibar.
 You can configure the size/readability of the sidebar freely by specifying the font familiy and height.
 ** TODO Org-mode and Confluence integration
-** TODO Jira
+** TODO Gists
 ** TODO Jenkins
 https://github.com/rmuslimov/jenkins.el
-** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]] -
-It's an older alternative to neotree
-Speedbar is a program for Emacs which can be used to summarize information related to the current buffer.
-Its original inspiration is the 'explorer' often used in modern development environments, office packages, and web browsers.
+** TODO Jira
+* Everything *and* the Kitchen Sink
+Emacs can do everything apparently as these may prove
+** TODO Yet another youtube-dl interface for Emacs
+http://oremacs.com/2015/01/05/youtube-dl/
+** TODO Embedding Youtube videos with org-mode links
+http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
+** REJECTED Nyan mode
+ - What? http://www.nyan.cat/
+ - What's that got to do with emacs https://www.youtube.com/watch?v=eWyC6_mzxb4
+ - Where to get it: https://github.com/TeMPOraL/nyan-mode
+ - how to:
+#+BEGIN_SRC emacs-lisp
+;; Don't use this package
+;; (use-package nyan-mode :init (nyan-mode 1))
+#+END_SRC
+
+** Emoji's
+https://github.com/iqbalansari/emacs-emojify
 * Org Mode Settings
 [[http://www.star.bris.ac.uk/bjm/org-basics.html]]
 
@@ -857,6 +961,22 @@ enabled Flyspell-mode by default whenever in org-mode
 #+BEGIN_SRC emacs-lisp
 (add-hook 'org-mode-hook 'turn-on-flyspell)
 #+END_SRC
+* Set up startup-screen
+Remove the initial start up message, with the Emacs Logo.
+TODO - can something useful be done here?
+
+This section needs to be done at the end because of side effects... For example org mode automatic spell checking needs to be set before we open "config.org"
+
+#+BEGIN_SRC emacs-lisp
+;;(setq initial-scratch-message "")
+(setq inhibit-startup-message t)
+(setq inhibit-splash-screen t)
+#+END_SRC
+
+Open .emacs.d/config.org as I will always want to access it.
+#+BEGIN_SRC emacs-lisp
+  (find-file (expand-file-name "config.org" user-emacs-directory))
+#+END_SRC
 
 * TODOs
 Look at http://emacs.sexy
@@ -865,5 +985,6 @@ This is useful so I don't need to comment out code
 and I can keep any rejected config in case it becomes useful in the future.
 * <<Troubleshooting>> 
 ** If there is an error on start up, try "M-x package-refresh-contents" and restart
+** You may need to restart multiple times for it to clear all the errors
 ** Remove OS specific code. (Search through the tags.)
 
