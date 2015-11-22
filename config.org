@@ -10,8 +10,10 @@ Configuration *heavily* inspired by [[https://github.com/danielmai/.emacs.d][Dan
 It uses the use-package package/macro that makes the loading of packages more readable. See [[https://www.youtube.com/watch?v=VIuOwIBL-ZU][Overview of Init Files Using Org-Mode and Use-Package]] presentation, 
 for more advantages and use cases.
 
+Note: Expect to run M-x package-refresh-contents on the first couple of start-ups until it has everything it needs.
+
 See [[Troubleshooting]] when things don't work!
-+Tested+ tried in OSes: Windows 7, Ubuntu 15.10
++Tested+ Tried in OSes: Ubuntu 15.10, Windows 7
 
 * Personal Information
 #+BEGIN_SRC emacs-lisp
@@ -219,7 +221,7 @@ This makes sentence navigation commands work with one space.
  - http://emacsblog.org/2009/05/18/copying-lines-not-killing/
 
 * Navigation
-** ACCEPTED NeoTree
+** ACCEPTED <<NeoTree>>
  - http://www.emacswiki.org/emacs/NeoTree
  - https://github.com/jaypei/emacs-neotree
 
@@ -227,6 +229,7 @@ NeoTree is just a navigation view, similar to Eclipse's nav.
 It's useful for browsing directory structure of a project.
 It's slower finding and opening files than Helm or Ido mode.
 Use Dired for editing/renaming/deleting files.
+Use [[Sunrise Commander]] for copying/moving between directories
 It's a useful addition to the toolbox, especially if you are more used to an ide.
 
 Useful Keys
@@ -335,7 +338,8 @@ Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
   :config
   (setq aw-keys (append dvorak-right-home-row dvorak-left-home-row)) ;; keys are set to the Dvorak home row.
   (ace-window-display-mode)
-  :bind ("M-o" . ace-window))
+  :bind (("C-x o" . ace-window) ;; This package improves/replaces 'other-window
+         ("M-o" . ace-window)))
 #+END_SRC
 
 ** TODO Ace-isearch
@@ -360,12 +364,12 @@ Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
  - [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
 
 ** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]]
-It's an older alternative to neotree
+It's an older alternative to [[NeoTree]]
 Speedbar is a program for Emacs which can be used to summarize information related to the current buffer.
 Its original inspiration is the 'explorer' often used in modern development environments, office packages, and web browsers.
 ** REJECTED Move between windows
-Replaced with [[Ace Window]]
-[[https://www.masteringemacs.org][Mastering Emacs]] recommends rebinding C-x o to M-o as one will want to move windows often.
+ - Replaced with [[Ace Window]]
+ - [[https://www.masteringemacs.org][Mastering Emacs]] recommends rebinding C-x o to M-o as one will want to move windows often.
 (But it has been known to stop arrow keys working under x-term)
 ;; #+BEGIN_SRC emacs-lisp
 ;; (global-set-key (kbd "M-o") 'other-window)
@@ -546,7 +550,7 @@ Note: These are the Windows settings on my Window 7 box. YMMV
  - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]] 
  - [[https://www.youtube.com/watch?v=U2Rl23-_ePw][YouTube: .Emacs #7 - The Command Line]]
 * File Managers and file system explorers
-** TODO Sunrise Commander
+** TODO <<Sunrise Commander>>
 A file manager inspired by [[https://en.wikipedia.org/wiki/Norton_Commander][Norton Commander]] and [[https://en.wikipedia.org/wiki/Midnight_Commander][Mignight Commander]].
  - http://www.emacswiki.org/emacs/Sunrise_Commander
  - http://www.emacswiki.org/emacs/Sunrise_Commander_Tips
@@ -561,9 +565,81 @@ It's like find-file crossed with [[http://www.emacswiki.org/emacs/IswitchBuffers
 but with a larger and more easily readable dedicated window for matches instead of the minibuffer.
 
 * Programming
+
+** Rainbow mode
+https://julien.danjou.info/projects/emacs-packages
+rainbow-mode is a minor mode for Emacs which displays strings representing colors with the 
+color they represent as background.
+
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-mode
+  :ensure t
+  :config
+  (add-hook 'css-mode-hook #'rainbow-mode))
+#+END_SRC
+
+** Rainbow Delimiters
+http://www.emacswiki.org/emacs/RainbowDelimiters
+RainbowDelimiters is a 'rainbow parentheses'-like mode which highlights parens, brackets, 
+and braces according to their depth. Each successive level is highlighted a different color. 
+This makes it easy to spot matching delimiters, orient yourself in the code, and tell which 
+statements are at the same depth.
+
+#+BEGIN_SRC emacs-lisp
+(use-package rainbow-delimiters
+  :ensure t
+  :config
+  (add-hook 'emacs-lisp-mode-hook 'rainbow-delimiters-mode))
+#+END_SRC
+
+** subword mode
+[[http:\\wikemacs.org/wiki/Subword-mode][subword-mode]] is a buffer-local minor mode. 
+Enabling it remaps word-based editing commands to subword-based commands that handle symbols 
+with mixed uppercase and lowercase letters.
+
+Here we call these mixed case symbols `nomenclatures'. Each capitalized (or completely 
+uppercase) part of a nomenclature is called a `subword'. Here are some examples:
+
+|-------------------+--------------------------------|
+| Nomenclature      | Sub-words                      |
+|-------------------+--------------------------------|
+| GtkWindow         | "Gtk" and "Window"             |
+| EmacsFrameClass   | "Emacs", "Frame" and "Class"   |
+| NSGraphicsContext | "NS", "Graphics" and "Context" |
+|-------------------+--------------------------------|
+
+#+BEGIN_SRC emacs-lisp
+(use-package subword :defer t 
+;;  :diminish subword-mode
+)
+#+END_SRC
+
+** Yasnippet
+[[http://www.emacswiki.org/emacs/Yasnippet][YASnippet]] is a template system for Emacs. 
+It allows you to type an abbreviation and automatically expand it into function templates.
+
+See what it looks like: [[http://www.youtube.com/watch?v%3DZCGmZK4V7Sg][Yasnippet Screencast]].
+
+Bundled language templates includes: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. 
+The snippet syntax is inspired from TextMate's syntax, you cyas-san even import most TextMate templates to YASnippet.
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
+  :config (yas-reload-all)
+  :init
+  (progn
+    (yas-global-mode 1)
+    (use-package clojure-snippets)))
+#+END_SRC
+
 ** paredit
 #+BEGIN_QUOTE
 "[[https://twitter.com/kentbeck/status/311983951218630656][I'm ready to try an editor that only allows]] [[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]] transformations" -- [[https://en.wikipedia.org/wiki/Kent_Beck][Kent Beck]]
+
+"If you think paredit is not for you, then you need to become the kind of person that paredit is for."
+-- [[https://github.com/technomancy][Phil Hagelberg]].
 #+END_QUOTE
 
  - [[https://www.youtube.com/watch?v=D6h5dFyyUX0][Emacs Rocks! Episode 14: Paredit]]
@@ -580,18 +656,27 @@ but with a larger and more easily readable dedicated window for matches instead 
 *** Clojure
 [[http://clojure.org/][Clojure]] is a general-purpose programming language with an emphasis on functional programming and is a dialect of the Lisp.
 It runs on the Java Virtual Machine, [[https://github.com/clojure/clojurescript][JavaScript]] and Common Language Runtime engines. Clojure treats code as data and has a macro system. 
+
+[[https://github.com/clojure-emacs/clojure-mode][Clojure-mode]]
+
 #+begin_src emacs-lisp
 (use-package clojure-mode
   :ensure t
-  :mode (("\\.clj\\'" . clojure-mode)
-         ("\\.edn\\'" . clojure-mode))
-;;  :init ((add-hook 'clojure-mode-hook #'yas-minor-mode)         
-;;         (add-hook 'clojure-mode-hook #'linum-mode)             
-;;         (add-hook 'clojure-mode-hook #'subword-mode)           
+  :mode (("\.clj$"      . clojure-mode)
+         ("\.cljs$"     . clojure-mode)
+         ("\.cljx$"     . clojure-mode)
+         ("\.edn$"      . clojure-mode)
+         ("\.boot$"     . clojure-mode)
+         ("\.cljs\.hl$" . clojure-mode))
+  :init (progn 
+         (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
+;;         (add-hook 'clojure-mode-hook #'subword-mode)
+         (add-hook 'clojure-mode-hook #'yas-minor-mode)
+;;         (add-hook 'clojure-mode-hook #'linum-mode)
 ;;         (add-hook 'clojure-mode-hook #'smartparens-mode)        ;; may want paredit instead
-;;         (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
-;;         (add-hook 'clojure-mode-hook #'eldoc-mode)             
-;;         (add-hook 'clojure-mode-hook #'idle-highlight-mode))
+;;         (add-hook 'clojure-mode-hook #'eldoc-mode)
+;;         (add-hook 'clojure-mode-hook #'idle-highlight-mode)
+)
 )
 #+end_src
 
@@ -601,7 +686,7 @@ It runs on the Java Virtual Machine, [[https://github.com/clojure/clojurescript]
 [[https://melpa.org/#/4clojure][Open and evaluate 4clojure.com questions]]
 *** CIDER
 [[https://github.com/clojure-emacs/cider][CIDER]], formerly nrepl.el, is the *C.lojure I.nteractive D.evelopment E.nvironment* that *R.ocks* for Emacs! It's built on top of nREPL, the Clojure networked REPL server. 
-CIDER is a great alternative to the now deprecated combination of SLIME + swank-clojure.
+CIDER is an alternative to the deprecated combination of SLIME + swank-clojure.
 
 CIDER's history and architecture: [[https://www.youtube.com/watch?v=4X-1fJm25Ww][The Evolution of the Emacs tooling for Clojure]].
 If you like the project, [[https://github.com/clojure-emacs/cider#donations][support its ongoing development]].
@@ -653,8 +738,8 @@ The :config keyword specifies code to be executed after the package is loaded. H
 (use-package cider
   :ensure t
   :defer t
-  :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
-  :diminish subword-mode
+;;  :init (add-hook 'cider-mode-hook #'clj-refactor-mode)
+;;  :diminish subword-mode
   :config
   (setq nrepl-log-messages t                  
         cider-repl-display-in-current-window t
@@ -670,26 +755,62 @@ The :config keyword specifies code to be executed after the package is loaded. H
 
 #+end_src
 
+
+| Key                  | Action             | Meaning                                                                    |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| C-c M-j              | cider-jack-in      | Launch an nREPL server                                                     |
+| C-c C-q              | cider-quit         | kill the nREPL buffer                                                      |
+| C-c C-n              | cider-eval-ns-form | From your clojure buffer you switch to this namespace in the REPL.         |
+| C-c C-z              |                    | actually switches to the associated REPL buffer (and back).                |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| Evaluating Functions |                    |                                                                            |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| C-c C-k              |                    | Load your current buffer                                                   |
+| C-c C-e              |                    | Eval the form to the left of the point (cursor) and show the result inline |
+| C-c C-c              |                    | Eval the top-level form at point and show the result inline                |
+| C-c C-p              |                    | pretty-printed popup buffer version of C-c C-e                             |
+| C-c C-f              |                    | pretty-printed popup buffer version of C-c C-f                             |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| Testing              |                    |                                                                            |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| C-c ,                |                    | Run tests for namespace                                                    |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| Other Useful Tools   |                    |                                                                            |
+|----------------------+--------------------+----------------------------------------------------------------------------|
+| M-.                  |                    | Jump to the definition of the symbol at point                              |
+| C-c C-d              |                    | Clojure docs for the symbol at point                                       |
+| C-c C-j              |                    | Java docs for symbol at point                                              |
+| C-c C-o              |                    | In the REPL, remove the result of previous evaluation                      |
+| C-u C-c C-o          |                    | In the REPL, remove all previous output                                    |
+|                      |                    |                                                                            |
+
 [[https://ccann.github.io/2015/10/18/cider/][A Basic CIDER Configuraiton with use-package]]
 https://ccann.github.io/2015/11/05/cider-workflow/:
 Hot CIDER Commands
 
-When I first started using CIDER I was intimidated by the block of 41 cider-mode and 25 cider-repl-mode interactive commands (to be fair, there's a lot of overlap between the two). Luckily you only need a small subset of these commands at your fingertips to be very productive:
+When I first started using CIDER I was intimidated by the block of 41 cider-mode and 
+25 cider-repl-mode interactive commands 
+(to be fair, there's a lot of overlap between the two). 
+Luckily you only need a small subset of these commands 
+at your fingertips to be very productive:
 
 REPLs and Namespaces
-Open a project file (created with Leiningen or Boot) and in that buffer C-c M-j to launch an nREPL server and corresponding REPL client. This client will be associated with your project. You can see the nREPL server in the mode line:
+Open a project file (created with Leiningen or Boot) and in that buffer 
+C-c M-j to launch an nREPL server and corresponding REPL client. 
+This client will be associated with your project. 
+You can see the nREPL server in the mode line:
 *All Clojure cider[clj:demo@51099]*
 
-You're done with your REPL and you want to quit: C-c C-q. This is one of those commands I wish I'd seen earlier. I spent so much time killing nREPL buffers manually.
+You're done with your REPL and you want to quit: C-c C-q. 
+This is one of those commands I wish I'd seen earlier. 
+I spent so much time killing nREPL buffers manually.
 
-From your clojure buffer you can use C-c C-n to switch to this namespace in the REPL. C-c C-z actually switches to the associated REPL buffer (and back!).
+From your clojure buffer you can use C-c C-n to switch to this namespace in the REPL. 
+C-c C-z actually switches to the associated REPL buffer (and back!).
+
 Evaluating Functions
-Load your current buffer with C-c C-k. You can do form evaluation a few different ways, here are the basics:
-
-Eval the form to the left of the point (cursor) and show the result inline with C-c C-e
-
-Evaluating Functions
-Load your current buffer with C-c C-k. You can do form evaluation a few different ways, here are the basics:
+Load your current buffer with C-c C-k. 
+You can do form evaluation a few different ways, here are the basics:
 
 Eval the form to the left of the point (cursor) and show the result inline with C-c C-e
   (map #(*% %) (take 10 (range))) => (0 1 2 3 4 5 6 7 8 9)
@@ -704,7 +825,9 @@ A few other basic but high impact functions include:
 
 Jump you to the definition of the symbol at point with M-..
 See clojure docs for the symbol at point with C-c C-d d and java docs with C-c C-d j.
-In the REPL C-c C-o will remove the result of the previous evaluation, useful especially when you have a verbose output clogging up your workspace. With the prefix argument, C-u, it will remove all previous output.
+In the REPL C-c C-o will remove the result of the previous evaluation, 
+useful especially when you have a verbose output clogging up your workspace. 
+With the prefix argument, C-u, it will remove all previous output.
 
 *** cider-eval-sexp-fu
 #+BEGIN_SRC emacs-lisp
@@ -715,6 +838,13 @@ In the REPL C-c C-o will remove the result of the previous evaluation, useful es
 *** TODO clj-refactor
 Does not load - only tried in Windows.
 #+BEGIN_SRC emacs-lisp
+
+(use-package clj-refactor :ensure t
+  :init (add-hook 'clojure-mode-hook (lambda ()
+                                       (clj-refactor-mode 1)
+                                       (cljr-add-keybindings-with-prefix "C-c M-r")))
+  :diminish "")
+
 ;; (use-package clj-refactor
 ;;   :defer t
 ;;   :ensure t
