@@ -10,10 +10,14 @@ Configuration *heavily* inspired by [[https://github.com/danielmai/.emacs.d][Dan
 It uses the use-package package/macro that makes the loading of packages more readable. See [[https://www.youtube.com/watch?v=VIuOwIBL-ZU][Overview of Init Files Using Org-Mode and Use-Package]] presentation, 
 for more advantages and use cases.
 
+See also [[https://github.com/emacs-tw/awesome-emacs][Awesome emacs]] for useful packages.
+
 Note: Expect to run M-x package-refresh-contents on the first couple of start-ups until it has everything it needs.
 
 See [[Troubleshooting]] when things don't work!
 +Tested+ Tried in OSes: Ubuntu 15.10, Windows 7
+
+TODO: To review this method of Literal emacs -  https://github.com/pierre-lecocq/literal-emacs
 
 * Personal Information
 #+BEGIN_SRC emacs-lisp
@@ -27,6 +31,11 @@ See [[Troubleshooting]] when things don't work!
 | Command                           | Action                                                   |
 |-----------------------------------+----------------------------------------------------------|
 | M-x describe-personal-keybindings | Shows every keybinding created using use-package's :bind |
+|-----------------------------------+----------------------------------------------------------|
+| C-c '                             | Inside BEGIN_SRC, will take you to a buffer for the code |
+|                                   | contents. The buffer will have code highlighting, etc.   |
+|-----------------------------------+----------------------------------------------------------|
+|                                   |                                                          | 
 
 * Prerequisites
 Items best served at the top of the config file.
@@ -121,6 +130,7 @@ Use [[https://en.wikipedia.org/wiki/UTF-8][UTF-8]] character encoding when possi
 (prefer-coding-system 'utf-8)
 #+end_src
 
+
 * Control the GUI and sound elements
 Including:
  - menu-bar (a drop down menu)
@@ -208,6 +218,13 @@ This makes sentence navigation commands work with one space.
 (setq sentence-end-double-space nil)
 #+END_SRC
 
+** Show keybindings immediately in the minibuffer
+ - http://pragmaticemacs.com/emacs/show-unfinished-keystrokes-early/
+
+#+BEGIN_SRC emacs-lisp
+(setq echo-keystrokes 0.1)
+#+END_SRC
+
 ** TODO Winner mode - undo and redo window configuration
 #+BEGIN_SRC emacs-lisp
 ;;(use-package winner
@@ -225,21 +242,22 @@ This makes sentence navigation commands work with one space.
  - http://www.emacswiki.org/emacs/NeoTree
  - https://github.com/jaypei/emacs-neotree
 
-NeoTree is just a navigation view, similar to Eclipse's nav.
-It's useful for browsing directory structure of a project.
-It's slower finding and opening files than Helm or Ido mode.
+NeoTree is a navigation view, similar to Eclipse's nav.
+Useful for browsing directory structure of a project.
+Slower at opening files than Helm or Ido mode.
 Use Dired for editing/renaming/deleting files.
 Use [[Sunrise Commander]] for copying/moving between directories
-It's a useful addition to the toolbox, especially if you are more used to an ide.
+It's a useful addition to the toolbox, especially if you are more used to an IDE.
 
 Useful Keys
+|-----+--------------------------------|
 | Key | Action                         |
 |-----+--------------------------------|
 | F8  | Toggle NeoTree                 |
 | H   | Show hidden files, directories |
-|     |                                |
+|-----+--------------------------------|
 
-TODO figure out how to have own NeoTree theme for opening/closing folders.
+TODO figure out how to configure NeoTree theme for opening/closing folders.
 #+BEGIN_SRC emacs-lisp
 (use-package neotree
   :ensure t
@@ -300,10 +318,10 @@ A quick way to jump around text in buffers.
 
 ** ON-TRIAL Projectile
 [[http://batsov.com/projectile/][Projectile Home]]
-[[http://wikemacs.org/wiki/Projectile]["Projectile]] is project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies."
+"[[http://wikemacs.org/wiki/Projectile][Projectile]] is project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies."
 Projectile - works with Lein projects
 
- If you want to mark a folder manually as a project just create an empty .projectile file in it.
+If you want to mark a folder manually as a project just create an empty .projectile file in it.
 #+BEGIN_SRC emacs-lisp
 (use-package projectile
   :ensure t
@@ -326,6 +344,8 @@ Projectile - works with Lein projects
 #+END_SRC
 
 ** ON-TRIAL <<Ace Window>>
+ - http://sachachua.com/blog/2015/01/emacs-microhabit-switching-windows-windmove-ace-window-ace-jump/
+
 From Daniel Mai's:
 "[[https://github.com/abo-abo/ace-window][ace-window]] is a package that uses the same idea from ace-jump-mode for buffer navigation, but applies it to windows. 
 The default keys are 1-9, but it's faster to access the keys on the home row," 
@@ -336,11 +356,16 @@ Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
 (use-package ace-window
   :ensure t
   :config
-  (setq aw-keys (append dvorak-right-home-row dvorak-left-home-row)) ;; keys are set to the Dvorak home row.
+  (setq aw-keys (append dvorak-right-home-row dvorak-left-home-row)) ;; keys are set to the Dvorak home row, giving precedence to the right hand.
   (ace-window-display-mode)
   :bind (("C-x o" . ace-window) ;; This package improves/replaces 'other-window
          ("M-o" . ace-window)))
 #+END_SRC
+
+** TODO Resize window
+ - https://github.com/dpsutton/resize-window
+ - https://www.reddit.com/r/emacs/comments/3to9a6/resizemode/
+
 
 ** TODO Ace-isearch
 #+BEGIN_SRC emacs-lisp
@@ -357,6 +382,32 @@ Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
  - [[https://www.masteringemacs.org/article/introduction-to-ido-mode][Introduction to Ido Mode]]
  - https://www.reddit.com/r/emacs/comments/3o36sc/what_do_you_prefer_ido_or_helm/
 
+** TODO Move Through Edit Points
+ - http://pragmaticemacs.com/emacs/move-through-edit-points/
+ - http://www.emacswiki.org/emacs/GotoChg
+We've looked before at how emacs leaves a trail of breadcrumbs (the mark ring) through which you can navigate to hop around to places you've been in the buffer.
+
+A nice alternative is to move round through points at which you made edits in a buffer. You can do this by installing the package goto-chg. Set it up by adding the following to your emacs config file:
+
+;;(require 'goto-chg)
+;;(global-set-key (kbd "C-c b ,") 'goto-last-change)
+;;(global-set-key (kbd "C-c b .") 'goto-last-change-reverse)
+Now you can use C-c b , and C-c b . to go back and forth through the edit points in your buffer. It takes you through your undo history without actually undoing anything.
+
+For bonus points you can use C-u 0 C-c b , to give a description of the change you made at a particular stop on your tour.
+
+** TODO Previous locations
+ - http://pragmaticemacs.com/emacs/jump-around-previous-locations-in-a-buffer/
+
+When you mark text using C-SPACE as described previously, emacs adds that location to the "mark ring"  This is just a list of places you have marked previously in a buffer. You can jump to the last place in the mark ring using C-u C-SPACE, then use C-u C-SPACE to keep going to previous places.
+
+The neat thing is that emacs automatically adds marks for you when you do different things that jump you to a different place in a buffer (e.g. when you start a search or move to the start or end of the buffer) so C-u C-SPACE will often magically take you back to where you want to go. Try it - you'll be surprised how often just does what you want.
+
+If you know you will want to come back to a particular spot, just hit C-SPACE twice to mark that point.
+
+Update
+Reader Clement pointed out that my previous advice to use C-SPACE to continue cycling through the mark ring doesn't work with default settings. Instead you should use C-u C-SPACE to keep moving back through the mark ring. If you want to be able to just use C-SPACE then you need to customise the variable set-mark-command-repeat-pop to be non-nil. See the emacs manual.
+
 ** TODO Ivy / Swipper
 [[http://oremacs.com/2015/04/16/ivy-mode/][Ivy]] is an alternative to Ido mode
 
@@ -364,9 +415,8 @@ Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
  - [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
 
 ** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]]
-It's an older alternative to [[NeoTree]]
-Speedbar is a program for Emacs which can be used to summarize information related to the current buffer.
-Its original inspiration is the 'explorer' often used in modern development environments, office packages, and web browsers.
+An alternative to [[NeoTree]]
+Speedbar opens in another Frame.
 ** REJECTED Move between windows
  - Replaced with [[Ace Window]]
  - [[https://www.masteringemacs.org][Mastering Emacs]] recommends rebinding C-x o to M-o as one will want to move windows often.
@@ -404,6 +454,7 @@ boxes around the mode line.
 
 ** Solarized theme
 Here's some configuration for [[https://github.com/bbatsov/solarized-emacs/][bbatsov's solarized themes]].
+ - http://ethanschoonover.com/solarized
 
 #+begin_src emacs-lisp
 (use-package solarized-theme
@@ -467,10 +518,8 @@ Examples of why it may be useful:
 *** TODO Aspell Install instructions
 Instructions are patchy on-line.
 Note: These are the Windows settings on my Window 7 box. YMMV
-*** TODO Make window only
-
+*** Windows OS settings
 #+BEGIN_SRC emacs-lisp
-
 (cond
  ((string-equal system-type "windows-nt") ; Microsoft Windows
   (progn (add-to-list 'exec-path "C:/Program Files (x86)/Aspell/bin/")
@@ -518,22 +567,55 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 ** ON-TRIAL Expand Region
  - [[https://github.com/magnars/expand-region.el][expand-region.el]]
  - [[https://www.youtube.com/watch?v=_RvHz3vJ3kA][watch @emacsrock on Expand Region]]
-
+ Expands the area of text selected. Useful for:
+ - selecting words >> sentences >> paragraphs
+ - selecting surrounding s-expressions in lisps
 #+BEGIN_SRC emacs-lisp
 (use-package expand-region
   :ensure t
   :bind ("C-=" . er/expand-region))
 #+END_SRC
 
+** ON-TRIAL YASnippet Yet Another Snippet
+ -  [[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
+
+[[http://www.emacswiki.org/emacs/Yasnippet][YASnippet]] is a template system for Emacs. 
+It allows you to type an abbreviation and automatically expand it into function templates.
+
+See what it looks like: [[http://www.youtube.com/watch?v%3DZCGmZK4V7Sg][Yasnippet Screencast]].
+
+Bundled language templates includes: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. 
+The snippet syntax is inspired from TextMate's syntax, you cyas-san even import most TextMate templates to YASnippet.
+
+#+BEGIN_SRC emacs-lisp
+(use-package yasnippet
+  :ensure t
+  :diminish yas-minor-mode
+  :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
+  :config (yas-reload-all)
+  :init
+  (progn
+    (yas-global-mode 1)
+    (use-package clojure-snippets)))
+#+END_SRC
+
 ** TODO Hippie Expand
-** TODO YASnippet Yet Another Snippet
-[[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
+** TODO Company mode ?
+ - http://www.emacswiki.org/emacs/CompanyMode
+ - http://blog.binchen.org/posts/emacs-auto-completion-for-non-programmers.html
+
+#+BEGIN_SRC emacs-lisp
+;;(use-package company
+;;  :ensure t
+;;  :config
+;;  (add-hook 'prog-mode-hook 'company-mode))
+#+END_SRC
+
 ** Abbrev
 ** DAbbrev or dynamic abbreviations
 ** Skeletons
 ** Tempo
 ** Autoinsert
-** Company mode ?
 * Source Control
 ** Magit
 [[http://magit.vc/about.html][Magit]] is an interface to the [[https://en.wikipedia.org/wiki/Version_control][version control system]] [[http://git-scm.com/][Git]].
@@ -545,18 +627,28 @@ Note: These are the Windows settings on my Window 7 box. YMMV
   (define-key magit-status-mode-map (kbd "q") 'magit-quit-session))
 #+END_SRC
 
+*** TODO I need a cheatsheet/pop-up to show options
+or learn to use help more efficiently
+
 * Shell / EShell / Terminal / Command Line / Command Prompt
  - [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs: An Overview]]
  - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]] 
  - [[https://www.youtube.com/watch?v=U2Rl23-_ePw][YouTube: .Emacs #7 - The Command Line]]
+
+** TODO Add configuration to add useful aliases
+** TODO Abbreviate infomation on current directory
+
 * File Managers and file system explorers
 ** TODO <<Sunrise Commander>>
 A file manager inspired by [[https://en.wikipedia.org/wiki/Norton_Commander][Norton Commander]] and [[https://en.wikipedia.org/wiki/Midnight_Commander][Mignight Commander]].
  - http://www.emacswiki.org/emacs/Sunrise_Commander
  - http://www.emacswiki.org/emacs/Sunrise_Commander_Tips
  - http://www.emacswiki.org/emacs/Sunrise_Commander_For_Noobs
+ - http://pragmaticemacs.com/emacs/double-dired-with-sunrise-commander/
 
-** TODO dired 
+** TODO dired-hacks
+ - https://github.com/Fuco1/dired-hacks
+ 
 ** TODO lusty-explorer
 [[http://www.emacswiki.org/emacs/LustyExplorer][LustyExplorer]] is a fast and responsive way to manage files and buffers. 
 It includes both a filesystem explorer and a buffer switcher through a common interface.
@@ -570,6 +662,7 @@ but with a larger and more easily readable dedicated window for matches instead 
 https://julien.danjou.info/projects/emacs-packages
 rainbow-mode is a minor mode for Emacs which displays strings representing colors with the 
 color they represent as background.
+Useful for editing css
 
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-mode
@@ -578,13 +671,14 @@ color they represent as background.
   (add-hook 'css-mode-hook #'rainbow-mode))
 #+END_SRC
 
+*** TODO Check out configuration with Clojure's css garden
 ** Rainbow Delimiters
 http://www.emacswiki.org/emacs/RainbowDelimiters
 RainbowDelimiters is a 'rainbow parentheses'-like mode which highlights parens, brackets, 
 and braces according to their depth. Each successive level is highlighted a different color. 
 This makes it easy to spot matching delimiters, orient yourself in the code, and tell which 
 statements are at the same depth.
-
+Useful for editing Lisp code.
 #+BEGIN_SRC emacs-lisp
 (use-package rainbow-delimiters
   :ensure t
@@ -614,27 +708,7 @@ uppercase) part of a nomenclature is called a `subword'. Here are some examples:
 )
 #+END_SRC
 
-** Yasnippet
-[[http://www.emacswiki.org/emacs/Yasnippet][YASnippet]] is a template system for Emacs. 
-It allows you to type an abbreviation and automatically expand it into function templates.
-
-See what it looks like: [[http://www.youtube.com/watch?v%3DZCGmZK4V7Sg][Yasnippet Screencast]].
-
-Bundled language templates includes: C, C++, C#, Perl, Python, Ruby, SQL, LaTeX, HTML, CSS and more. 
-The snippet syntax is inspired from TextMate's syntax, you cyas-san even import most TextMate templates to YASnippet.
-#+BEGIN_SRC emacs-lisp
-(use-package yasnippet
-  :ensure t
-  :diminish yas-minor-mode
-  :mode ("/\\.emacs\\.d/snippets/" . snippet-mode)
-  :config (yas-reload-all)
-  :init
-  (progn
-    (yas-global-mode 1)
-    (use-package clojure-snippets)))
-#+END_SRC
-
-** paredit
+** TODO paredit
 #+BEGIN_QUOTE
 "[[https://twitter.com/kentbeck/status/311983951218630656][I'm ready to try an editor that only allows]] [[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]] transformations" -- [[https://en.wikipedia.org/wiki/Kent_Beck][Kent Beck]]
 
@@ -647,13 +721,72 @@ The snippet syntax is inspired from TextMate's syntax, you cyas-san even import 
  - [[http://www.emacswiki.org/emacs/PareditCheatsheet][Paredit Cheatsheet]]
  - [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][The Animated Guide to Paredit]]
  - [[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands]]
-** Smartparens
+** TODO Smartparens
  - https://github.com/Fuco1/smartparens/wiki/Paredit-and-smartparens
  - [[https://www.youtube.com/watch?v%3DykjRUr7FgoI][Smartparens - smart editing of paired expressions 1 of 2]]
  - [[https://www.youtube.com/watch?v%3DefSvfqf3Ykw][Smartparens - smart editing of paired expressions 2 of 2]]
+** TODO parinfer
+ - http://shaunlebron.github.io/parinfer/index.html
+* Programming Languages
+
+** Web Development
+*** ON-TRIAL JavaScript
+ - [[https://github.com/mooz/js2-mode][js2-mode]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package js2-mode
+  :ensure t
+  :defer t
+  :commands js2-mode
+  :init
+  (progn
+    (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
+    (setq-default js2-basic-offset 2)
+    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode)))
+  :config
+  (progn
+    (js2-imenu-extras-setup)
+    (bind-key "C-x C-e" 'js-send-last-sexp js2-mode-map)
+    (bind-key "C-M-x" 'js-send-last-sexp-and-go js2-mode-map)
+    (bind-key "C-c b" 'js-send-buffer js2-mode-map)
+    (bind-key "C-c C-b" 'js-send-buffer-and-go js2-mode-map)
+    (bind-key "C-c w" 'my/copy-javascript-region-or-buffer js2-mode-map)
+    (bind-key "C-c l" 'js-load-file-and-go js2-mode-map)))
+#+END_SRC
+
+*** TODO JSLint
+*** ON-TRIAL HTML Mode/ Web-Mode HTMLModeDeluxe / Emacs WebDev Environment
+ - [[http://www.emacswiki.org/cgi-bin/wiki/HtmlModeDeluxe][HTMLModeDeluxe]]
+ - [[http://www.dzr-web.com/people/darren/projects/emacs-webdev][Emacs WebDev Environment]]
+ - [[http://www.nongnu.org/baol-hth][HTML Helper Mode]]
+
+TODO maybe clashing with css mode.
+ - [[http://web-mode.org/][Web-mode]]
+#+BEGIN_SRC emacs-lisp
+(use-package web-mode
+  :ensure t
+  :defer t
+  :mode "\\.html?\\'"
+  :config
+  (progn
+    (setq web-mode-enable-current-element-highlight t)
+    (setq web-mode-ac-sources-alist
+          '(("css" . (ac-source-css-property))
+            ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
+          )))
+#+END_SRC
+
+*** ON-TRIAL css-mode
+#+BEGIN_SRC emacs-lisp
+  (use-package css-mode
+    :mode ("\\.css\\'" . css-mode))
+#+END_SRC
+
+*** TODO Code completion for HTML/JS/CSS in Emacs
+ - http://blog.binchen.org/posts/code-completion-for-htmljscss-in-emacs.html
 
 ** Clojure
-*** Clojure
+*** ACCEPTED Clojure
 [[http://clojure.org/][Clojure]] is a general-purpose programming language with an emphasis on functional programming and is a dialect of the Lisp.
 It runs on the Java Virtual Machine, [[https://github.com/clojure/clojurescript][JavaScript]] and Common Language Runtime engines. Clojure treats code as data and has a macro system. 
 
@@ -680,43 +813,9 @@ It runs on the Java Virtual Machine, [[https://github.com/clojure/clojurescript]
 )
 #+end_src
 
-*** TODO flycheck-clojure
-
-*** TODO Open and evaluate 4clojure questions
-[[https://melpa.org/#/4clojure][Open and evaluate 4clojure.com questions]]
-*** CIDER
-[[https://github.com/clojure-emacs/cider][CIDER]], formerly nrepl.el, is the *C.lojure I.nteractive D.evelopment E.nvironment* that *R.ocks* for Emacs! It's built on top of nREPL, the Clojure networked REPL server. 
-CIDER is an alternative to the deprecated combination of SLIME + swank-clojure.
-
-CIDER's history and architecture: [[https://www.youtube.com/watch?v=4X-1fJm25Ww][The Evolution of the Emacs tooling for Clojure]].
-If you like the project, [[https://github.com/clojure-emacs/cider#donations][support its ongoing development]].
-
-Gitter
-Some features:
- - Powerful REPL
- - Interactive code evaluation
- - Code completion
- - Compilation notes (error and warning highlighting)
- - Human-friendly stacktraces
- - Smart code completion
- - Definition lookup
- - Documentation lookup
- - Resource lookup
- - Apropos
- - Debugger
- - Value inspector
- - Function tracing
- - Interactive macroexpansion
- - [[http://conj.io/][Grimoire]] integration
- - clojure.test integration
- - Classpath browser
- - Namespace browser
- - nREPL session management
- - Scratchpad
- - Minibuffer code evaluation
- - Integration with company-mode and auto-complete-mode
- 
-TODO - Change commented out code.
+*** ACCEPTED CIDER
+**** my emacs-lisp configuration
+ - TODO - Change commented out code.
 What's going on here?
 
 ensure cider is installed
@@ -755,102 +854,182 @@ The :config keyword specifies code to be executed after the package is loaded. H
 
 #+end_src
 
+**** TODO Configure Figwheel with Cider ClojureScript REPL
+**** About CIDER
+[[https://github.com/clojure-emacs/cider][CIDER]], formerly nrepl.el, is the *C.lojure I.nteractive D.evelopment E.nvironment* that *R.ocks* for Emacs! It's built on top of nREPL, the Clojure networked REPL server. 
+CIDER is an alternative to the deprecated combination of SLIME + swank-clojure.
 
-| Key                  | Action             | Meaning                                                                    |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| C-c M-j              | cider-jack-in      | Launch an nREPL server                                                     |
-| C-c C-q              | cider-quit         | kill the nREPL buffer                                                      |
-| C-c C-n              | cider-eval-ns-form | From your clojure buffer you switch to this namespace in the REPL.         |
-| C-c C-z              |                    | actually switches to the associated REPL buffer (and back).                |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| Evaluating Functions |                    |                                                                            |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| C-c C-k              |                    | Load your current buffer                                                   |
-| C-c C-e              |                    | Eval the form to the left of the point (cursor) and show the result inline |
-| C-c C-c              |                    | Eval the top-level form at point and show the result inline                |
-| C-c C-p              |                    | pretty-printed popup buffer version of C-c C-e                             |
-| C-c C-f              |                    | pretty-printed popup buffer version of C-c C-f                             |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| Testing              |                    |                                                                            |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| C-c ,                |                    | Run tests for namespace                                                    |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| Other Useful Tools   |                    |                                                                            |
-|----------------------+--------------------+----------------------------------------------------------------------------|
-| M-.                  |                    | Jump to the definition of the symbol at point                              |
-| C-c C-d              |                    | Clojure docs for the symbol at point                                       |
-| C-c C-j              |                    | Java docs for symbol at point                                              |
-| C-c C-o              |                    | In the REPL, remove the result of previous evaluation                      |
-| C-u C-c C-o          |                    | In the REPL, remove all previous output                                    |
-|                      |                    |                                                                            |
+Gitter
+Some features:
+ - Powerful REPL
+ - Interactive code evaluation
+ - Code completion
+ - Compilation notes (error and warning highlighting)
+ - Human-friendly stacktraces
+ - Smart code completion
+ - Definition lookup
+ - Documentation lookup
+ - Resource lookup
+ - Apropos
+ - Debugger
+ - Value inspector
+ - Function tracing
+ - Interactive macroexpansion
+ - [[http://conj.io/][Grimoire]] integration
+ - clojure.test integration
+ - Classpath browser
+ - Namespace browser
+ - nREPL session management
+ - Scratchpad
+ - Minibuffer code evaluation
+ - Integration with company-mode and auto-complete-mode
 
-[[https://ccann.github.io/2015/10/18/cider/][A Basic CIDER Configuraiton with use-package]]
-https://ccann.github.io/2015/11/05/cider-workflow/:
-Hot CIDER Commands
+**** Links to tutorials and further reading 
+ - https://github.com/mlakewood/cider-cheatsheet
+ - [[http://www.lispcast.com/tdd-workflow-in-clojure-with-emacs-and-cider][TDD Workflow in Clojure using Emacs with CIDER]]
+ - CIDER's history and architecture: [[https://www.youtube.com/watch?v=4X-1fJm25Ww][The Evolution of the Emacs tooling for Clojure]].
+ - [[https://github.com/clojure-emacs/cider#donations][support its ongoing development]].
+ - [[http://ccann.github.io/2015/10/18/cider/][A Basic CIDER Configuration with use-package]]
+ - http://www.lispcast.com/tdd-workflow-in-clojure-with-emacs-and-cider
+ - https://ccann.github.io/2015/11/05/cider-workflow/
 
-When I first started using CIDER I was intimidated by the block of 41 cider-mode and 
-25 cider-repl-mode interactive commands 
-(to be fair, there's a lot of overlap between the two). 
-Luckily you only need a small subset of these commands 
-at your fingertips to be very productive:
+**** Cheatsheet
 
-REPLs and Namespaces
-Open a project file (created with Leiningen or Boot) and in that buffer 
-C-c M-j to launch an nREPL server and corresponding REPL client. 
-This client will be associated with your project. 
-You can see the nREPL server in the mode line:
-*All Clojure cider[clj:demo@51099]*
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| Key                  | Action                      | Meaning                                                                    |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| C-c M-j              | cider-jack-in               | * Launch an nREPL server                                                   |
+| C-c M-J              | cider-jack-in-clojurescript | * Launch a ClojureScript REPL                                              |
+| C-c C-q              | cider-quit                  | * kill the nREPL buffer                                                    |
+| C-c C-n              | cider-eval-ns-form          | * From your clojure buffer you switch to this namespace in the REPL.       |
+| C-c C-z              | cider-switch-to-repl-buffer | actually switches to the associated REPL buffer (and back).                |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| Evaluating Functions |                             |                                                                            |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| C-c C-k              | cider-load-buffer           | * Load your current buffer                                                 |
+| C-c C-e              | cider-eval-last-sexp        | Eval the form to the left of the point (cursor) and show the result inline |
+| C-c C-c              | cider-eval-defun-at-point   | Eval the top-level form at point and show the result inline                |
+| C-c C-p              |                             | pretty-printed popup buffer version of C-c C-e                             |
+| C-c C-f              |                             | pretty-printed popup buffer version of C-c C-f                             |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| Testing              |                             |                                                                            |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| C-c ,                |                             | * Run tests for namespace                                                  |
+| C-c C-,              |                             | Re-run test failures/errors for namespace.                                 |
+| C-c M-,              |                             | Run test at point.                                                         |
+| M-n                  |                             | Move point to next test.                                                   |
+| M-p                  |                             | Move point to previous test.                                               |
+| t and M-.            |                             | Jump to test definition.                                                   |
+| d                    |                             | Display diff of actual vs expected.                                        |
+| e                    |                             | Display test error cause and stacktrace info.                              |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| Other Useful Tools   |                             |                                                                            |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
+| M-.                  |                             | Jump to the definition of the symbol at point                              |
+| C-c C-d              |                             | Clojure docs for the symbol at point                                       |
+| C-c C-j              |                             | Java docs for symbol at point                                              |
+| C-c C-o              |                             | In the REPL, remove the result of previous evaluation                      |
+| C-u C-c C-o          |                             | In the REPL, remove all previous output                                    |
+|                      |                             |                                                                            |
+|----------------------+-----------------------------+----------------------------------------------------------------------------|
 
-You're done with your REPL and you want to quit: C-c C-q. 
-This is one of those commands I wish I'd seen earlier. 
-I spent so much time killing nREPL buffers manually.
+*important functions
 
-From your clojure buffer you can use C-c C-n to switch to this namespace in the REPL. 
-C-c C-z actually switches to the associated REPL buffer (and back!).
+*** ON-TRIAL clj-refactor
+ - https://github.com/clojure-emacs/clj-refactor.el
+ - https://githulb.com/clojure-emacs/clj-refactor.el/wiki
+ - http://jakemccrary.com/blog/2015/06/30/my-favorite-clj-refactor-features/
+ - http://www.cheatography.com/joelittlejohn/cheat-sheets/clj-refactor-el/
+ - http://www.lispcast.com/clj-refactor
+ - [[http://endlessparentheses.com/clj-refactor-unleash-your-clojure-wizard-.html]]
+ - http://melpa.org/#/cljr-helm
 
-Evaluating Functions
-Load your current buffer with C-c C-k. 
-You can do form evaluation a few different ways, here are the basics:
-
-Eval the form to the left of the point (cursor) and show the result inline with C-c C-e
-  (map #(*% %) (take 10 (range))) => (0 1 2 3 4 5 6 7 8 9)
-
-Eval the top-level form at point and show the result inline with C-c C-c:
-  (map #(*% %) (take 10 (range))) => (0 1 4 9 16 25 36 49 64 81)
-
-Bonus: Try C-c C-p and C-c C-f for pretty-printed popup buffer versions of the previous two evals, respectively. Useful for copying output.
-
-Other Useful Tools
-A few other basic but high impact functions include:
-
-Jump you to the definition of the symbol at point with M-..
-See clojure docs for the symbol at point with C-c C-d d and java docs with C-c C-d j.
-In the REPL C-c C-o will remove the result of the previous evaluation, 
-useful especially when you have a verbose output clogging up your workspace. 
-With the prefix argument, C-u, it will remove all previous output.
-
-*** cider-eval-sexp-fu
 #+BEGIN_SRC emacs-lisp
-;;(use-package cider-eval-sexp-fu
-;;  :defer t)
-#+END_SRC
-
-*** TODO clj-refactor
-Does not load - only tried in Windows.
-#+BEGIN_SRC emacs-lisp
-
 (use-package clj-refactor :ensure t
+  :defer t
+  :ensure t
   :init (add-hook 'clojure-mode-hook (lambda ()
                                        (clj-refactor-mode 1)
                                        (cljr-add-keybindings-with-prefix "C-c M-r")))
   :diminish "")
 
 ;; (use-package clj-refactor
-;;   :defer t
-;;   :ensure t
 ;;   :diminish clj-refactor-mode
 ;;   :config (cljr-add-keybindings-with-prefix "C-c C-m"))
+
+(use-package cljr-helm
+  :ensure t
+;;  :config
+;;  (define-key clojure-mode-map (kbd "C-c r") 'cljr-helm)
+)
 #+END_SRC
+
+*** ACCEPTED Clojure-cheatsheet
+- https://github.com/clojure-emacs/clojure-cheatsheet
+Handy [[http://clojure.org/cheatsheet][Clojure Cheatsheet]], packaged into a searchable offline form
+
+#+BEGIN_SRC emac-lisp
+(use-package clojure-cheatsheet :ensure t)
+#+END_SRC
+
+*** TODO squiggly-clojure
+ - https://github.com/clojure-emacs/squiggly-clojure
+ - http://blog.podsnap.com/squiggly.html
+
+Need to change .Lein/boot for it to work
+
+*** TODO flycheck-clojure
+*** TODO Squiggly-clojure - Flycheck checker for Clojure
+
+*** TODO Open and evaluate 4clojure questions
+ - [[https://melpa.org/#/4clojure][Open and evaluate 4clojure.com questions]]
+
+*** ON-TRIAL cider-eval-sexp-fu
+ - https://github.com/clojure-emacs/cider-eval-sexp-fu
+ - http://melpa.org/#/cider-eval-sexp-fu
+ - https://github.com/hchbaw/eval-sexp-fu.el/wiki
+ - https://github.com/hchbaw/eval-sexp-fu.el/wiki/LongVersionOfTheDemo
+
+Tiny feature adding support for cider eval functions.
+See `eval-sexp-fu' help for more info on how to configure the
+
+flash behavior.
+#+BEGIN_SRC emacs-lisp
+(use-package cider-eval-sexp-fu
+  :defer t)
+#+END_SRC
+
+*** TODO Add Lambda symbol to anon functions
+ - http://endlessparentheses.com/using-prettify-symbols-in-clojure-and-elisp-without-breaking-indentation.html
+
+*** TODO Test-Driven-Development in CIDER and Emacs
+ - http://endlessparentheses.com/test-driven-development-in-cider-and-emacs.html
+ - http://endlessparentheses.com/update-on-tdd-mode-with-cider.html
+
+*** TODO Clojure test coverage
+
+*** TODO ac-cider (autocomplete)
+ - https://github.com/clojure-emacs/ac-cider
+ - (Alternative) https://github.com/jakemcc/ac-cider-compliment
+
+Init.el was changed to a stable release for this.
+
+;; Auto-complete integration.
+;; Disabled for now, as it hangs Emacs when typing (the official solution seems to be to switch to company-mode).
+;; (use-package ac-cider
+;;   :ensure t
+;;   :defer t
+;;   :init
+;;   (require 'conf/utils/hooks) ; Used: add-hooks.
+;;   (with-eval-after-load 'auto-complete
+;;     (add-hooks '(cider-mode-hook cider-repl-mode-hook) 'ac-cider-setup)))
+
+*** TODO Slamhound 
+*** TODO Eastwood (a Clojure lint)
+*** TODO Literate Programming with Clojure and Org Babel
+ - Lightening Talk! Literate Programming with Clojure and Org Babel - Andrew Cowper (Skills Matter 2012-09-04)
+
+*** TODO Smart-mode-line
 
 ** TODO Java
 Eclim 
@@ -859,39 +1038,22 @@ eclim is the best solution for now: https://github.com/xiaohanyu/oh-my-emacs/blo
  - https://github.com/m0smith/malabar-mode
  - http://www.emacswiki.org/emacs/EmacsEclim
  - http://www.troikatech.com/blog/2014/11/26/ensime-and-emacs-as-a-scala-ide
-
-** ON-TRIAL JavaScript
-[[https://github.com/mooz/js2-mode][js2-mode]]
-
-#+BEGIN_SRC emacs-lisp
-(use-package js2-mode
-  :ensure t
-  :defer t
-  :commands js2-mode
-  :init
-  (progn
-    (add-to-list 'auto-mode-alist '("\\.js$" . js2-mode))
-    (setq-default js2-basic-offset 2)
-    (add-to-list 'interpreter-mode-alist (cons "node" 'js2-mode)))
-  :config
-  (progn
-    (js2-imenu-extras-setup)
-    (bind-key "C-x C-e" 'js-send-last-sexp js2-mode-map)
-    (bind-key "C-M-x" 'js-send-last-sexp-and-go js2-mode-map)
-    (bind-key "C-c b" 'js-send-buffer js2-mode-map)
-    (bind-key "C-c C-b" 'js-send-buffer-and-go js2-mode-map)
-    (bind-key "C-c w" 'my/copy-javascript-region-or-buffer js2-mode-map)
-    (bind-key "C-c l" 'js-load-file-and-go js2-mode-map)))
-#+END_SRC
-
 ** TODO XSLT
-** TODO HTML
 ** TODO Ruby
 ** TODO ColdFusion
 * Databases
-** TODO SQL
-M-x sql-ms
-** MongoDB
+** ON-TRIAL SQL
+ - https://truongtx.me/2014/08/23/setup-emacs-as-an-sql-database-client/
+
+#+BEGIN_SRC emacs-lisp
+(use-package sql
+  :ensure t
+  :mode ("\.sql$" . sql-mode))
+#+END_SRC
+
+** TODO MongoDB
+MongoDb is a NoSQL, document oriented database
+
 * Data formats (XML, Jason, etc.)
 ** ON-TRIAL XML
 #+BEGIN_SRC emacs-lisp
@@ -903,42 +1065,34 @@ M-x sql-ms
 	    (lambda ()
 	      (setq indent-tabs-mode nil))))
 #+END_SRC
+*** TODO How to quickly format unaligned nodes 
+*** TODO How to hide nodes
+** ON-TRIAL JSON
+ - http://edward.oconnor.cx/2006/03/json.el
 
-** TODO JSON
-* Web development
-** ON-TRIAL HTML Mode/ Web-Mode HTMLModeDeluxe / Emacs WebDev Environment
- - [[http://www.emacswiki.org/cgi-bin/wiki/HtmlModeDeluxe][HTMLModeDeluxe]]
- - [[http://www.dzr-web.com/people/darren/projects/emacs-webdev][Emacs WebDev Environment]]
- - [[http://www.nongnu.org/baol-hth][HTML Helper Mode]]
-
-TODO maybe clashing with css mode.
- - [[http://web-mode.org/][Web-mode]]
 #+BEGIN_SRC emacs-lisp
-(use-package web-mode
-  :ensure t
-  :defer t
-  :mode "\\.html?\\'"
-  :config
-  (progn
-    (setq web-mode-enable-current-element-highlight t)
-    (setq web-mode-ac-sources-alist
-          '(("css" . (ac-source-css-property))
-            ("html" . (ac-source-words-in-buffer ac-source-abbrev)))
-          )))
+(use-package json-mode
+  :mode "\\.json\\'"
+;;  :config
+;;  (bind-key "{" #'paredit-open-curly json-mode-map)
+;;  (bind-key "}" #'paredit-close-curly json-mode-map)
+)
 #+END_SRC
-
-** ON-TRIAL css-mode
-#+BEGIN_SRC emacs-lisp
-(use-package css-mode
-  :mode ("\\.css\\'" . css-mode))
-#+END_SRC
+*** TODO How to quickly format unaligned nodes 
+*** TODO How to hide nodes
 
 * To try
 Popular packages: https://emacs.zeef.com/ehartc
 
-** TODO Squiggly-clojure - Flycheck checker for Clojure
-** TODO Slamhound 
-** TODO Eastwood (a Clojure lint)
+** TODO Pomadoro in org mode
+ - http://www.emacswiki.org/emacs/pomodoro
+
+** TODO Quelpa
+ - https://github.com/quelpa/quelpa
+ - https://github.com/quelpa/quelpa-use-package
+
+Build and install your Emacs Lisp packages on-the-fly and directly from source
+
 ** TODO Display command-log
 ** TODO PDF viewers
 
@@ -966,6 +1120,11 @@ https://www.reddit.com/r/emacs/comments/3p9so8/linux_only_much_better_mode_for_v
 http://www.emacswiki.org/emacs/EasyPG
 
 ** TODO RSS
+ - https://github.com/skeeto/elfeed
+ - [[http://nullprogram.com/blog/2015/12/03/][9 Elfeed Features You Might Not Know]] 
+
+** TODO Helm Orgcard
+https://github.com/emacs-jp/helm-orgcard
 ** TODO email
  - http://www.emacswiki.org/emacs/CategoryMail
  - http://www.emacswiki.org/emacs/mu4e
@@ -977,7 +1136,9 @@ http://www.emacswiki.org/emacs/EasyPG
  - https://www.reddit.com/r/emacs/comments/3s5fas/which_email_client_mu4e_mutt_notmuch_gnus_do_you/
 
 ** TODO Presentations
-[[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
+ - [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
+ - Org Present
+ - Org Prezzi
 
 ** TODO Code folding
 [[https://github.com/mrkkrp/vimish-fold/][vimish-fold]] fancier than [[http://www.emacswiki.org/emacs/HideShow][Hide/Show]]
@@ -1000,8 +1161,9 @@ https://github.com/ChillarAnand/emacsism/blob/master/emacsism.md
 ** TODO Reddit mode
 https://github.com/death/reddit-mode
 ** TODO Stack Exchange
-https://github.com/vermiculus/sx.el
-
+ - https://github.com/vermiculus/sx.el
+** TODO AWS
+ - https://github.com/istib/helm-aws
 ** TODO mic-paren or paren
 #+BEGIN_SRC emacs-lisp
 ;;(or  (use-package mic-paren
@@ -1018,10 +1180,22 @@ https://github.com/vermiculus/sx.el
 ** TODO Multiple cursors mode
 
 ** TODO llvm-mode
+
+** TODO Slack
+Here are a few:
+ - https://github.com/yuya373/emacs-slack
+ - https://github.com/ober/slack-el
+ - https://github.com/raamdev/slack-el
+ - https://github.com/zeph1e/slack.el
+ - https://github.com/capitaomorte/eslack
+
 ** TODO lua-mode
 ** TODO Spacemacs
  - https://github.com/syl20bnr/spacemacs
  - http://jr0cket.co.uk/2015/08/spacemacs-first-impressions-from-an-emacs-driven-developer.html
+ - https://www.youtube.com/watch?v=ZFV5EqpZ6_s&list=PLrJ2YN5y27KLhd3yNs2dR8_inqtEiEweE
+ - http://thume.ca/howto/2015/03/07/configuring-spacemacs-a-tutorial/
+ - https://www.reddit.com/r/emacs/comments/3ucnnx/trying_out_spacemacs_without_messing_with_my/
 
 ** TODO [[http://www.emacswiki.org/emacs/MiniMap][MiniMap]]
 Minimap is a feature provided by the Sublime editor. It shows a smaller, "minibar" display of the current buffer alongside
@@ -1051,9 +1225,12 @@ http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
 #+END_SRC
 
 ** Emoji's
-https://github.com/iqbalansari/emacs-emojify
-* Org Mode Settings
-[[http://www.star.bris.ac.uk/bjm/org-basics.html]]
+ - https://github.com/iqbalansari/emacs-emojify
+* TODO Org Mode Settings
+ - [[http://www.star.bris.ac.uk/bjm/org-basics.html]]
+ - http://orgmode.org/manual/Speed-keys.html
+
+
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package org
@@ -1070,9 +1247,14 @@ https://github.com/iqbalansari/emacs-emojify
 ;;     (python . t)
 ;;     (ruby . t)
 ;;     (sh . t))))
-
 #+END_SRC
+** TODO Org-capture
+ - http://sachachua.com/blog/2015/11/capturing-links-quickly-with-emacsclient-org-protocol-and-chrome-shortcut-manager-on-microsoft-windows-8/
+ - https://github.com/CestDiego/org-capture-chrome
+ - http://orgmode.org/worg/org-contrib/org-protocol.html
 
+
+** TODO Add sql and Clojure to the babel support
 ** Word wrap
 
 #+BEGIN_SRC 
