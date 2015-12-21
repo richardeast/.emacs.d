@@ -972,6 +972,26 @@ Handy [[http://clojure.org/cheatsheet][Clojure Cheatsheet]], packaged into a sea
 (use-package clojure-cheatsheet :ensure t)
 #+END_SRC
 
+*** ON-TRIAL Clojure defuns
+Helper functions for Clojure.
+ - https://github.com/magnars/.emacs.d/blob/master/defuns/clj-defuns.el
+
+#+BEGIN_SRC 
+(use-package s
+  :ensure t)
+
+(defun clj--src-file-name-from-test (name)
+  (s-with name
+    (s-replace "/test/" "/src/")
+    (s-replace "_test.clj" ".clj")))
+
+(defun clj--test-file-name-from-src (name)
+  (s-with name
+    (s-replace "/src/" "/test/")
+    (s-replace ".clj" "_test.clj")))
+#+END_SRC
+
+
 *** TODO squiggly-clojure
  - https://github.com/clojure-emacs/squiggly-clojure
  - http://blog.podsnap.com/squiggly.html
@@ -1121,7 +1141,8 @@ http://www.emacswiki.org/emacs/EasyPG
 
 ** TODO RSS
  - https://github.com/skeeto/elfeed
- - [[http://nullprogram.com/blog/2015/12/03/][9 Elfeed Features You Might Not Know]] 
+ - [[http://nullprogram.com/blog/2015/12/03/][9 Elfeed Features You Might Not Know]]
+ - https://github.com/algernon/elfeed-goodies
 
 ** TODO Helm Orgcard
 https://github.com/emacs-jp/helm-orgcard
@@ -1134,6 +1155,14 @@ https://github.com/emacs-jp/helm-orgcard
  - http://vxlabs.com/2015/01/28/sending-emails-with-math-and-source-code/
  - http://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
  - https://www.reddit.com/r/emacs/comments/3s5fas/which_email_client_mu4e_mutt_notmuch_gnus_do_you/
+
+*** Gnus
+ - http://www.emacswiki.org/emacs/GnusTutorial
+ - http://pages.sachachua.com/.emacs.d/Sacha.html#orgheadline171
+ - http://codingquark.com/setting-up-gnus-in-emacs/
+ - https://www.reddit.com/r/emacs/comments/3vonma/gnu_emacs_faq_for_ms_windows_ezwinports/
+
+
 
 ** TODO Presentations
  - [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
