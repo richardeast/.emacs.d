@@ -515,10 +515,9 @@ Examples of why it may be useful:
 
 * Spelling
 ** Flyspell							  :WindowsOS:
-*** TODO Aspell Install instructions
-Instructions are patchy on-line.
+*** Windows 7 OS settings
+[[http://www.emacswiki.org/emacs/AspellWindows][Instructions]] tells you to install [[http://ftp.gnu.org/gnu/aspell/w32/Aspell-0-50-3-3-Setup.exe][Aspell]] and a [[http://ftp.gnu.org/gnu/aspell/w32/Aspell-en-0.50-2-3.exe][dictionary]].
 Note: These are the Windows settings on my Window 7 box. YMMV
-*** Windows OS settings
 #+BEGIN_SRC emacs-lisp
 (cond
  ((string-equal system-type "windows-nt") ; Microsoft Windows
@@ -991,7 +990,6 @@ Helper functions for Clojure.
     (s-replace ".clj" "_test.clj")))
 #+END_SRC
 
-
 *** TODO squiggly-clojure
  - https://github.com/clojure-emacs/squiggly-clojure
  - http://blog.podsnap.com/squiggly.html
@@ -1252,6 +1250,9 @@ http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
 ;; Don't use this package
 ;; (use-package nyan-mode :init (nyan-mode 1))
 #+END_SRC
+
+** Fireplace
+ - https://github.com/johanvts/emacs-fireplace/
 
 ** Emoji's
  - https://github.com/iqbalansari/emacs-emojify
