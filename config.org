@@ -130,7 +130,6 @@ Use [[https://en.wikipedia.org/wiki/UTF-8][UTF-8]] character encoding when possi
 (prefer-coding-system 'utf-8)
 #+end_src
 
-
 * Control the GUI and sound elements
 Including:
  - menu-bar (a drop down menu)
@@ -413,6 +412,8 @@ Reader Clement pointed out that my previous advice to use C-SPACE to continue cy
 
  - http://pragmaticemacs.com/emacs/dont-search-swipe/
  - [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
+ - http://blog.binchen.org/posts/hello-ivy-mode-bye-helm.html
+
 
 ** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]]
 An alternative to [[NeoTree]]
@@ -425,10 +426,23 @@ Speedbar opens in another Frame.
 ;; (global-set-key (kbd "M-o") 'other-window)
 ;; #+END_SRC
 
-* Themes
-Custom themes are collections of settings that can be enabled or disabled as a unit. You can use Custom themes to switch easily between various collections of settings, and to transfer such collections from one computer to another.
+* Undo
+ - http://www.emacswiki.org/emacs/CategoryUndo
 
-A Custom theme is stored as an Emacs Lisp source file. If the name of the Custom theme is name, the theme file is named name-theme.el. See [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Creating-Custom-Themes.html][Creating Custom Themes]], for the format of a theme file and how to make one.
+* Themes
+ - Check [[http://pawelbx.github.io/emacs-theme-gallery/][Emacs Theme Gallery]] for themes to suit your needs.
+ - https://www.reddit.com/r/emacs/comments/3oc7jk/nice_emacs_themes_with_a_limited_number_of_colors/
+
+Custom themes are collections of settings that can be enabled or disabled as a unit. You can use Custom themes to switch easily between various collections of settings, 
+and to transfer such collections from one computer to another.
+
+A Custom theme is stored as an Emacs Lisp source file. If the name of the Custom theme is name, the theme file is named name-theme.el. 
+See [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Creating-Custom-Themes.html][Creating Custom Themes]], for the format of a theme file and how to make one.
+
+** Theme-Creator
+ - http://emacs-theme-creator.appspot.com/
+ - http://mswift42.github.io/theme-creator/
+
 ** Set the location for the themes
 This is a folder where all themes can be stored.
 #+BEGIN_SRC emacs-lisp
@@ -513,7 +527,8 @@ Examples of why it may be useful:
  - https://skillsmatter.com/skillscasts/3552-live-programming-with-clojure
  - http://blog.josephwilk.net/art/live-coding-repl-electric.html
 
-* Spelling
+
+* Spelling / Dictionary
 ** Flyspell							  :WindowsOS:
 *** Windows 7 OS settings
 [[http://www.emacswiki.org/emacs/AspellWindows][Instructions]] tells you to install [[http://ftp.gnu.org/gnu/aspell/w32/Aspell-0-50-3-3-Setup.exe][Aspell]] and a [[http://ftp.gnu.org/gnu/aspell/w32/Aspell-en-0.50-2-3.exe][dictionary]].
@@ -526,6 +541,24 @@ Note: These are the Windows settings on my Window 7 box. YMMV
          (setq ispell-extra-args '("--sug-mode=ultra" "--lang=en_US")))))
 
 #+END_SRC
+** TODO Synonymous
+ - https://melpa.org/#/synonymous
+ - https://github.com/toroidal-code/synonymous.el
+
+** TODO Synonyms
+ - http://www.emacswiki.org/emacs/Synonyms
+
+** TODO Thesaurus
+ - http://www.emacswiki.org/emacs/thesaurus.el
+
+** TODO Define word
+ - http://oremacs.com/2015/05/22/define-word/
+
+** TODO Lookup Google, Dictionary, Documentation
+ - http://ergoemacs.org/emacs/emacs_lookup_ref.html
+ - http://melpa.org/#/xah-lookup
+ - https://github.com/xahlee/lookup-word-on-internet
+
 
 * Text Expansion
 ** ON-TRIAL Auto-Complete
@@ -633,6 +666,9 @@ or learn to use help more efficiently
  - [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs: An Overview]]
  - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]] 
  - [[https://www.youtube.com/watch?v=U2Rl23-_ePw][YouTube: .Emacs #7 - The Command Line]]
+ - https://www.reddit.com/r/emacs/comments/3xw5io/using_a_different_colour_scheme_for_mx_shell/
+
+
 
 ** TODO Add configuration to add useful aliases
 ** TODO Abbreviate infomation on current directory
@@ -882,7 +918,7 @@ Some features:
  - Scratchpad
  - Minibuffer code evaluation
  - Integration with company-mode and auto-complete-mode
-
+   
 **** Links to tutorials and further reading 
  - https://github.com/mlakewood/cider-cheatsheet
  - [[http://www.lispcast.com/tdd-workflow-in-clojure-with-emacs-and-cider][TDD Workflow in Clojure using Emacs with CIDER]]
@@ -891,6 +927,9 @@ Some features:
  - [[http://ccann.github.io/2015/10/18/cider/][A Basic CIDER Configuration with use-package]]
  - http://www.lispcast.com/tdd-workflow-in-clojure-with-emacs-and-cider
  - https://ccann.github.io/2015/11/05/cider-workflow/
+
+**** Separate regular and CIDER repls in Boot
+ - http://www.bytopia.org/2015/12/12/separate-regular-and-cider/
 
 **** Cheatsheet
 
@@ -1055,7 +1094,15 @@ eclim is the best solution for now: https://github.com/xiaohanyu/oh-my-emacs/blo
  - http://jdee.sourceforge.net/
  - https://github.com/m0smith/malabar-mode
  - http://www.emacswiki.org/emacs/EmacsEclim
+
+Other options
+ - Allows to manage Java import statements in Maven projects: http://elpa.gnu.org/packages/javaimp.html
+ - 
+
+** Scala
+ - https://github.com/ensime
  - http://www.troikatech.com/blog/2014/11/26/ensime-and-emacs-as-a-scala-ide
+
 ** TODO XSLT
 ** TODO Ruby
 ** TODO ColdFusion
@@ -1112,6 +1159,9 @@ Popular packages: https://emacs.zeef.com/ehartc
 Build and install your Emacs Lisp packages on-the-fly and directly from source
 
 ** TODO Display command-log
+
+** TODO Workgroups for Emacs
+ - https://github.com/pashinin/workgroups2
 ** TODO PDF viewers
 
 *** TODO Linux only
@@ -1146,31 +1196,56 @@ http://www.emacswiki.org/emacs/EasyPG
 https://github.com/emacs-jp/helm-orgcard
 ** TODO email
  - http://www.emacswiki.org/emacs/CategoryMail
+ - https://www.reddit.com/r/emacs/comments/3rk4cg/emacs_and_email/
+ - http://vxlabs.com/2015/01/28/sending-emails-with-math-and-source-code/
+ - http://codingquark.com/multiple-email-accounts-in-gnus/
+
+*** mu4e
  - http://www.emacswiki.org/emacs/mu4e
  - https://github.com/iqbalansari/mu4e-alert
  - http://emacs-fu.blogspot.co.uk/2012/08/introducing-mu4e-for-email.html
- - https://www.reddit.com/r/emacs/comments/3rk4cg/emacs_and_email/
- - http://vxlabs.com/2015/01/28/sending-emails-with-math-and-source-code/
+ - https://github.com/emacs-helm/helm-mu
  - http://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
  - https://www.reddit.com/r/emacs/comments/3s5fas/which_email_client_mu4e_mutt_notmuch_gnus_do_you/
-
+   
 *** Gnus
  - http://www.emacswiki.org/emacs/GnusTutorial
  - http://pages.sachachua.com/.emacs.d/Sacha.html#orgheadline171
  - http://codingquark.com/setting-up-gnus-in-emacs/
  - https://www.reddit.com/r/emacs/comments/3vonma/gnu_emacs_faq_for_ms_windows_ezwinports/
+ - https://www.reddit.com/r/emacs/comments/3wkccd/moving_from_mu4e_to_gnus/
+ - https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/gnus-guide-en.org
 
 
+** TODO Browser integration
+
+*** TODO Firefox controller
+https://github.com/cute-jumper/emacs-firefox-controller
+https://www.reddit.com/r/emacs/comments/3w9zg9/an_improved_firefox_controller_for_emacs/
 
 ** TODO Presentations
  - [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
  - Org Present
  - Org Prezzi
+** TODO Emoji's
+Could be useful for fitness training
+ - https://github.com/iqbalansari/emacs-emojify
+ - https://github.com/syohex/emacs-ac-emoji
+ - http://www.lunaryorn.com/2015/08/16/emojis-in-emacs.html
 
 ** TODO Code folding
 [[https://github.com/mrkkrp/vimish-fold/][vimish-fold]] fancier than [[http://www.emacswiki.org/emacs/HideShow][Hide/Show]]
 
 ** TODO folds
+
+** TODO General Close
+ - https://github.com/emacs-berlin/general-close
+Insert closing delimiter
+When it's about to insert a closing delimiter, commonly typing a parenthesis, bracket, brace or whatever is needed.
+Beside these keys are often more difficult to reach than others on some keyboards, all closing in all modes could be done by just one convenient key.
+Also closing must not mean to insert a single character: if behind an "if" in shell-script, `general-close' might provide the "fi", etc.
+
+** TODO Flycheck
 ** TODO Copy-code
 
 ** TODO Focus
@@ -1235,8 +1310,15 @@ You can configure the size/readability of the sidebar freely by specifying the f
 ** TODO Jenkins
 https://github.com/rmuslimov/jenkins.el
 ** TODO Jira
+** TODO Emacs Multimedia
+*** EMMS
+Emacs Multimedia System https://www.gnu.org/software/emms/
+*** Emacs-based Subtitle Editor
+http://mihai.bazon.net/projects/sese
+
 * Everything *and* the Kitchen Sink
 Emacs can do everything apparently as these may prove
+
 ** TODO Yet another youtube-dl interface for Emacs
 http://oremacs.com/2015/01/05/youtube-dl/
 ** TODO Embedding Youtube videos with org-mode links
@@ -1245,22 +1327,29 @@ http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
  - What? http://www.nyan.cat/
  - What's that got to do with emacs https://www.youtube.com/watch?v=eWyC6_mzxb4
  - Where to get it: https://github.com/TeMPOraL/nyan-mode
+ - See also https://github.com/wasamasa/zone-nyan
  - how to:
 #+BEGIN_SRC emacs-lisp
 ;; Don't use this package
 ;; (use-package nyan-mode :init (nyan-mode 1))
 #+END_SRC
 
+** Make your Emacs sound like a typewriter
+https://github.com/rbanffy/selectric-mode
+
 ** Fireplace
  - https://github.com/johanvts/emacs-fireplace/
 
-** Emoji's
- - https://github.com/iqbalansari/emacs-emojify
+** Highlight-tail (draw a colourful tail while you write) 
+http://melpa.org/#/highlight-tail
+
 * TODO Org Mode Settings
  - [[http://www.star.bris.ac.uk/bjm/org-basics.html]]
  - http://orgmode.org/manual/Speed-keys.html
-
-
+ - org-mode support for vCard export and import http://stable.melpa.org/#/org-vcard
+ - https://www.reddit.com/r/emacs/comments/3ldf6i/org_log_when_something_is_done_with_state_changes/
+ - [[https://www.youtube.com/watch?v=gGO4RPzAKQY][Using emacs org mode for fitness]]
+  
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package org
@@ -1278,6 +1367,7 @@ http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
 ;;     (ruby . t)
 ;;     (sh . t))))
 #+END_SRC
+
 ** TODO Org-capture
  - http://sachachua.com/blog/2015/11/capturing-links-quickly-with-emacsclient-org-protocol-and-chrome-shortcut-manager-on-microsoft-windows-8/
  - https://github.com/CestDiego/org-capture-chrome
@@ -1329,4 +1419,5 @@ and I can keep any rejected config in case it becomes useful in the future.
 ** If there is an error on start up, try "M-x package-refresh-contents" and restart
 ** You may need to restart multiple times for it to clear all the errors
 ** Remove OS specific code. (Search through the tags.)
+** x64 Windows build is found [[http://emacsbinw64.sourceforge.net/][here]].
 
