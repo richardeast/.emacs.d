@@ -607,7 +607,9 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 #+END_SRC
 
 ** ON-TRIAL YASnippet Yet Another Snippet
- -  [[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
+ - [[https://www.youtube.com/watch?v=YLKZ4GehTcE&t=6m][used with Clojure code]]
+ - [[http://pragmaticemacs.com/emacs/smart-text-templates-with-yasnippet/][Smart text templates with yasnippet]]
+ - [[https://www.youtube.com/watch?v=1W66B3CHaUo][Emacs Rocks! Episode 06: Yeah! Snippets!]]
 
 [[http://www.emacswiki.org/emacs/Yasnippet][YASnippet]] is a template system for Emacs.
 It allows you to type an abbreviation and automatically expand it into function templates.
@@ -676,15 +678,21 @@ or learn to use help more efficiently
 ** TODO Abbreviate infomation on current directory
 
 * File Managers and file system explorers
+** Dired
+[[http://pragmaticemacs.com/emacs/show-current-file-in-dired-with-dired-jump/][Show current file in dired with "dired-jump" (C-x C-j)]]
+
+#+BEGIN_SRC emacs-lisp
+(use-package dired-x)
+#+END_SRC
+
+*** TODO dired-hacks
+ - https://github.com/Fuco1/dired-hacks
 ** TODO <<Sunrise Commander>>
 A file manager inspired by [[https://en.wikipedia.org/wiki/Norton_Commander][Norton Commander]] and [[https://en.wikipedia.org/wiki/Midnight_Commander][Mignight Commander]].
  - http://www.emacswiki.org/emacs/Sunrise_Commander
  - http://www.emacswiki.org/emacs/Sunrise_Commander_Tips
  - http://www.emacswiki.org/emacs/Sunrise_Commander_For_Noobs
  - http://pragmaticemacs.com/emacs/double-dired-with-sunrise-commander/
-
-** TODO dired-hacks
- - https://github.com/Fuco1/dired-hacks
 
 ** TODO lusty-explorer
 [[http://www.emacswiki.org/emacs/LustyExplorer][LustyExplorer]] is a fast and responsive way to manage files and buffers.
@@ -1148,6 +1156,58 @@ MongoDb is a NoSQL, document oriented database
 *** TODO How to quickly format unaligned nodes
 *** TODO How to hide nodes
 
+* Browser integration
+*** ON-TRIAL Engine Mode (search selected text in a browser.)
+ - https://github.com/hrs/engine-mode
+ - [[https://www.youtube.com/watch?v%3DMBhJBMYfWUo][Searching the Web with engine-mode presentation (youtube)]]
+
+engine-mode is a global minor mode for Emacs. It enables you to easily define search engines, bind them to keybindings, and query them from the comfort of your editor.
+
+#+BEGIN_SRC emacs-lisp
+(use-package engine-mode
+  :ensure t
+  :config
+  (progn
+    (engine/set-keymap-prefix (kbd "C-c /"))
+
+  (defengine amazon "https://www.amazon.co.uk/s/ref=nb_sb_noss_1?field-keywords=%s"
+    :keybinding "a")
+
+  (defengine duckduckgo "https://duckduckgo.com/html/?q=%s"
+    :keybinding "d")
+
+  (defengine github "https://github.com/search?ref=simplesearch&q=%s")
+
+  (defengine google "https://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
+    :keybinding "g")
+
+  (defengine google-images "http://www.google.com/images?hl=en&source=hp&biw=1440&bih=795&gbv=2&aq=f&aqi=&aql=&oq=&q=%s"
+    :keybinding "i")
+
+  (defengine google-maps "http://maps.google.com/maps?q=%s"
+    :keybinding "m"
+    :docstring "Mappin' it up.")
+
+  (defengine stack-overflow "https://stackoverflow.com/search?q=%s")
+  (defengine twitter "https://twitter.com/search?q=%s")
+
+  (defengine wikipedia "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
+    :keybinding "w"
+    :docstring "Searchin' the wikis.")
+
+  (defengine wiktionary "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
+  (defengine wolfram-alpha "http://www.wolframalpha.com/input/?i=%s")
+
+  (defengine youtube "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
+    :keybinding "y")
+  (engine-mode t)
+  ))
+#+END_SRC
+
+*** TODO Firefox controller
+https://github.com/cute-jumper/emacs-firefox-controller
+https://www.reddit.com/r/emacs/comments/3w9zg9/an_improved_firefox_controller_for_emacs/
+
 * To try
 Popular packages: https://emacs.zeef.com/ehartc
 
@@ -1160,13 +1220,20 @@ Popular packages: https://emacs.zeef.com/ehartc
 (use-package which-key
   :ensure t
   :init (which-key-mode)
-  :config (setq which-key-idle-delay 3)
+  :config (setq which-key-idle-delay 5) ;; Pop up only when unsure what to do
   :diminish (which-key-mode))
 #+END_SRC
 
 ** TODO Regex search/replace with lisp function
  - https://www.youtube.com/watch?v=5kYu8HYfWm4
  - https://www.masteringemacs.org/article/evaluating-lisp-forms-regular-expressions
+
+** TODO Alerts / Notifications and integrate with Org
+ - https://github.com/jwiegley/alert
+ - http://www.emacswiki.org/emacs/Alert
+ - https://julien.danjou.info/blog/2010/desktop-notification-support-for-Emacs
+ - http://emacs.stackexchange.com/questions/3844/good-methods-for-setting-up-alarms-audio-visual-triggered-by-org-mode-events
+ - http://sachachua.com/blog/2007/11/setting-up-appointment-reminders-in-org/
 
 ** TODO Pomadoro in org mode
  - http://www.emacswiki.org/emacs/pomodoro
@@ -1182,10 +1249,12 @@ Build and install your Emacs Lisp packages on-the-fly and directly from source
 ** TODO Workgroups for Emacs
  - https://github.com/pashinin/workgroups2
 ** TODO PDF viewers
+ - https://www.reddit.com/r/emacs/comments/3z5ixd/help_viewing_pdfs_in_emacs/
 
 *** TODO Linux only
-https://github.com/politza/pdf-tools
-https://www.reddit.com/r/emacs/comments/3p9so8/linux_only_much_better_mode_for_viewing_pdfs_than/
+ - https://github.com/politza/pdf-tools
+ - https://www.reddit.com/r/emacs/comments/3p9so8/linux_only_much_better_mode_for_viewing_pdfs_than/
+
 ** TODO remember current session files
  - http://www.gnu.org/software/emacs/manual/html_node/emacs/Saving-Emacs-Sessions.html
  - https://www.reddit.com/r/emacs/comments/3rzy03/access_the_last_environment_i_have_left/
@@ -1234,14 +1303,6 @@ https://github.com/emacs-jp/helm-orgcard
  - https://www.reddit.com/r/emacs/comments/3vonma/gnu_emacs_faq_for_ms_windows_ezwinports/
  - https://www.reddit.com/r/emacs/comments/3wkccd/moving_from_mu4e_to_gnus/
  - https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/gnus-guide-en.org
-
-
-** TODO Browser integration
-
-*** TODO Firefox controller
-https://github.com/cute-jumper/emacs-firefox-controller
-https://www.reddit.com/r/emacs/comments/3w9zg9/an_improved_firefox_controller_for_emacs/
-
 ** TODO Presentations
  - [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
  - Org Present
@@ -1275,6 +1336,12 @@ https://github.com/larstvei/Focus/blob/master/README.md
 ** TODO cursors mode
 
 ** TODO diff-mode
+
+** TODO browser style tabs as an alternative to buffers / elscreen
+ - http://emacs.stackexchange.com/questions/10081/browser-style-tabs-for-emacs/10112#10112
+ - http://wikemacs.org/wiki/Elscreen
+ - http://stackoverflow.com/questions/13176843/how-to-put-elscreen-tabs-on-the-top-only
+
 ** TODO cursor-cng
 ** TODO dedicated
 ** TODO emacsism
@@ -1370,6 +1437,10 @@ http://melpa.org/#/highlight-tail
  - https://www.reddit.com/r/emacs/comments/3ldf6i/org_log_when_something_is_done_with_state_changes/
  - [[https://www.youtube.com/watch?v=gGO4RPzAKQY][Using emacs org mode for fitness]]
  - https://github.com/christopherjwhite/org-toodledo
+
+ - http://stackoverflow.com/questions/11143645/emacs-org-mode-how-to-adjust-previous-clock-if-i-forget-to-clock-out
+
+ - http://sachachua.com/blog/2007/11/setting-up-appointment-reminders-in-org/
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package org
