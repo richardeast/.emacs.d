@@ -5,6 +5,20 @@
 
 #+TODO: TODO(t) ON-TRIAL | DONE(d) ACCEPTED REJECTED CANCELED(c) NOTE(n)
 
+#+BEGIN_SRC emacs-lisp
+;;                                     _
+;;   ___ _ __ ___   __ _  ___ ___   __| |
+;;  / _ \ '_ ` _ \ / _` |/ __/ __| / _` |
+;; |  __/ | | | | | (_| | (__\__ \| (_| |
+;;(_)___|_| |_| |_|\__,_|\___|___(_)__,_|
+;;                  __ _
+;;  ___ ___  _ __  / _(_) __ _   ___  _ __ __ _
+;; / __/ _ \| '_ \| |_| |/ _` | / _ \| '__/ _` |
+;;| (_| (_) | | | |  _| | (_| || (_) | | | (_| |
+;; \___\___/|_| |_|_| |_|\__, (_)___/|_|  \__, |
+;;                       |___/            |___/
+#+END_SRC
+
 Configuration *heavily* inspired by [[https://github.com/danielmai/.emacs.d][Daniel Mai's Emacs Configuration]] and is a [[https://en.wikipedia.org/wiki/Literate_programming][Literate programming]] implimentation of additional per-user Emacs-specific files.
 
 It uses the use-package package/macro that makes the loading of packages more readable. See [[https://www.youtube.com/watch?v=VIuOwIBL-ZU][Overview of Init Files Using Org-Mode and Use-Package]] presentation,
@@ -89,7 +103,6 @@ The following code stashes them all in ~/.emacs.d/backups, where they can be fou
 As disk space is cheap, save often.
 #+begin_src emacs-lisp
 (setq backup-directory-alist '(("." . "~/.emacs.d/backups")))
-
 (setq delete-old-versions -1)
 (setq version-control t)
 (setq vc-make-backup-files t)
@@ -123,12 +136,16 @@ From http://www.wisdomandwonder.com/wordpress/wp-content/uploads/2014/03/C3F.htm
 ** Character encoding
 Use [[https://en.wikipedia.org/wiki/UTF-8][UTF-8]] character encoding when possible.
 #+begin_src emacs-lisp
-(setq locale-coding-system 'utf-8)
-(set-terminal-coding-system 'utf-8)
-(set-keyboard-coding-system 'utf-8)
-(set-selection-coding-system 'utf-8)
-(prefer-coding-system 'utf-8)
+;(setq locale-coding-system 'utf-8)
+;(set-terminal-coding-system 'utf-8)
+;(set-keyboard-coding-system 'utf-8)
+;(set-selection-coding-system 'utf-8)
+;(prefer-coding-system 'utf-8)
+;(when (display-graphic-p)
+;   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
+
+** TODO Load sensitive information
 
 * Control the GUI and sound elements
 Including:
@@ -365,6 +382,8 @@ Daniel and myself use [[https://en.wikipedia.org/wiki/Dvorak_Simplified_Keyboard
  - https://github.com/dpsutton/resize-window
  - https://www.reddit.com/r/emacs/comments/3to9a6/resizemode/
 
+** perspective
+ -  https://medium.com/@andrewhyatt/review-of-perspective-and-persp-mode-for-emacs-a10ced1208e1
 
 ** TODO Ace-isearch
 #+BEGIN_SRC emacs-lisp
@@ -413,6 +432,7 @@ Reader Clement pointed out that my previous advice to use C-SPACE to continue cy
  - http://pragmaticemacs.com/emacs/dont-search-swipe/
  - [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
  - http://blog.binchen.org/posts/hello-ivy-mode-bye-helm.html
+ - https://www.reddit.com/r/emacs/comments/41dt4d/how_hard_itd_be_to_migrate_a_helm_to_ivy/
 
 
 ** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]]
@@ -432,6 +452,8 @@ Speedbar opens in another Frame.
 * Themes
  - Check [[http://pawelbx.github.io/emacs-theme-gallery/][Emacs Theme Gallery]] for themes to suit your needs.
  - https://www.reddit.com/r/emacs/comments/3oc7jk/nice_emacs_themes_with_a_limited_number_of_colors/
+ - http://mswift42.github.io/themecreator/
+ - https://github.com/mswift42/themecreator
 
 Custom themes are collections of settings that can be enabled or disabled as a unit. You can use Custom themes to switch easily between various collections of settings,
 and to transfer such collections from one computer to another.
@@ -476,20 +498,30 @@ Here's some configuration for [[https://github.com/bbatsov/solarized-emacs/][bba
   (setq solarized-use-variable-pitch nil)
   :ensure t)
 #+end_src
+
 ** Monokai theme
 The [[https://github.com/oneKelvinSmith/monokai-emacs][Monokai theme]] is s a port of the popular TextMate theme [[http://www.monokai.nl/blog/2006/07/15/textmate-color-theme/][Monokai]] by Wimer Hazenberg. The inspiration for the theme came from Bozhidar Batsov and his [[https://github.com/bbatsov/zenburn-emacs][Zenburn]] port and [[http://www.sublimetext.com/2][Sublime Text 2]] which defaults to this color scheme.
 #+begin_src emacs-lisp
 (setq monokai-use-variable-pitch nil)
 #+end_src
+
 ** White-Sand Theme
 [[https://github.com/mswift42/white-sand-theme][white-sand-theme]] Emacs 24 theme with light background.
 Created with [[http://emacs-theme-creator.appspot.com/][Emacs Theme Creator]].
+** Themes tried
+*** Light
+*** Dark
+  - [[https://github.com/mswift42/reykjavik-theme][reykjavik-theme]] - Emacs theme with a dark background and low saturated colors.
+  - [[https://github.com/mswift42/warm-night-theme][warm-night-theme]] - emacs24 theme with a dark background and warm colors. (Not as clear as cyberpunk for org-mode)
+  - Cyberpunk
 
+** Current Theme used on Startup
 #+begin_src emacs-lisp
 (use-package cyberpunk-theme
   :init
   :ensure t)
 #+end_src
+
 ** Theme functions
 Taken from [[https://github.com/danielmai/.emacs.d/blob/master/config.org][Daniel Mai's.emacs.d]]:
 #+BEGIN_SRC emacs-lisp
@@ -527,6 +559,18 @@ Examples of why it may be useful:
  - https://skillsmatter.com/skillscasts/3552-live-programming-with-clojure
  - http://blog.josephwilk.net/art/live-coding-repl-electric.html
 
+An alternative to above to try quickly:
+
+#+BEGIN_SRC emacs-lisp
+;;(defun toggle-transparency ()
+;;  (interactive)
+;;  (let ((param (cadr (frame-parameter nil 'alpha))))
+;;    (if (and param (/= param 100))
+;;        (set-frame-parameter nil 'alpha '(100 100))
+;;      (set-frame-parameter nil 'alpha '(85 50)))))
+;;(global-set-key (kbd "C-c t") 'toggle-transparency)
+#+END_SRC
+
 * Spelling / Dictionary
 ** Flyspell							  :WindowsOS:
 *** Windows 7 OS settings
@@ -553,7 +597,7 @@ Note: These are the Windows settings on my Window 7 box. YMMV
 ** TODO Define word
  - http://oremacs.com/2015/05/22/define-word/
 
-** TODO Lookup Google, Dictionary, Documentation
+** TODO Lookup Google, Dictionary, Documentation (see also [[Engine Mode]])
  - http://ergoemacs.org/emacs/emacs_lookup_ref.html
  - http://melpa.org/#/xah-lookup
  - https://github.com/xahlee/lookup-word-on-internet
@@ -666,6 +710,9 @@ The snippet syntax is inspired from TextMate's syntax, you cyas-san even import 
 *** TODO I need a cheatsheet/pop-up to show options
 or learn to use help more efficiently
 
+** Helm-backup
+ - https://github.com/antham/helm-backup
+
 * Shell / EShell / Terminal / Command Line / Command Prompt
  - [[https://www.masteringemacs.org/article/running-shells-in-emacs-overview][Running Shells in Emacs: An Overview]]
  - [[https://www.masteringemacs.org/article/complete-guide-mastering-eshell][Mastering Eshell]]
@@ -678,12 +725,18 @@ or learn to use help more efficiently
 ** TODO Abbreviate infomation on current directory
 
 * File Managers and file system explorers
+ - [[http://www.ict4g.net/adolfo/notes/2014/11/16/DirTree.html][Comparison of some file managers]]
+
 ** Dired
-[[http://pragmaticemacs.com/emacs/show-current-file-in-dired-with-dired-jump/][Show current file in dired with "dired-jump" (C-x C-j)]]
+ - [[http://pragmaticemacs.com/emacs/show-current-file-in-dired-with-dired-jump/][Show current file in dired with "dired-jump" (C-x C-j)]]
 
 #+BEGIN_SRC emacs-lisp
 (use-package dired-x)
+(setq dired-listing-switches "-alh") ; have file sizes in human-readable format (i.e. in units of B, K, M, G as appropriate).
 #+END_SRC
+
+*** TODO dired+
+ - http://pragmaticemacs.com/emacs/open-recent-directories-in-dired/
 
 *** TODO dired-hacks
  - https://github.com/Fuco1/dired-hacks
@@ -700,6 +753,15 @@ It includes both a filesystem explorer and a buffer switcher through a common in
 
 It's like find-file crossed with [[http://www.emacswiki.org/emacs/IswitchBuffers][iswitchb]] or [[http://www.emacswiki.org/emacs/InteractivelyDoThings][InteractivelyDoThings (ido)]],
 but with a larger and more easily readable dedicated window for matches instead of the minibuffer.
+
+** Uniquify
+ - http://www.emacswiki.org/emacs/uniquify
+
+The library uniquify overrides Emacs default mechanism for making buffer names unique
+#+BEGIN_SRC emacs-lisp
+(use-package uniquify
+  :config (setq uniquify-buffer-name-style 'forward))
+#+END_SRC
 
 * Programming
 
@@ -775,6 +837,11 @@ uppercase) part of a nomenclature is called a `subword'. Here are some examples:
 * Programming Languages
 
 ** Web Development
+
+ - https://github.com/niku/markdown-preview-eww
+ - [[https://www.youtube.com/watch?v%3DToj__EX1gpY][emacs live markdown "prewwier"]]
+
+
 *** ON-TRIAL JavaScript
  - [[https://github.com/mooz/js2-mode][js2-mode]]
 
@@ -798,6 +865,13 @@ uppercase) part of a nomenclature is called a `subword'. Here are some examples:
     (bind-key "C-c w" 'my/copy-javascript-region-or-buffer js2-mode-map)
     (bind-key "C-c l" 'js-load-file-and-go js2-mode-map)))
 #+END_SRC
+**** TODO Tern
+Tern is a stand-alone code-analysis engine for JavaScript
+
+ - http://ternjs.net/
+ - company-tern
+ - https://github.com/peteyy/.emacs.d/blob/master/settings/language-javascript.el
+
 
 *** TODO JSLint
 *** ON-TRIAL HTML Mode/ Web-Mode HTMLModeDeluxe / Emacs WebDev Environment
@@ -832,6 +906,16 @@ TODO maybe clashing with css mode.
 
 ** Clojure
 *** ACCEPTED Clojure
+
+ - http://endlessparentheses.com/using-prettify-symbols-in-clojure-and-elisp-without-breaking-indentation.html
+ - http://stackoverflow.com/questions/2285437/a-gentle-tutorial-to-emacs-swank-paredit-for-clojure
+ - http://www.unexpected-vortices.com/clojure/10-minute-emacs-for-clojure.html
+ - http://www.kedrovsky.com/blog/2012/08/19/clojure-emacs-nrepl-and-leiningen/
+ - https://en.wikibooks.org/wiki/Clojure_Programming/Getting_Started#Emacs
+ - http://clojure-doc.org/articles/tutorials/emacs.html
+ - http://www.braveclojure.com/basic-emacs/
+
+
 [[http://clojure.org/][Clojure]] is a general-purpose programming language with an emphasis on functional programming and is a dialect of the Lisp.
 It runs on the Java Virtual Machine, [[https://github.com/clojure/clojurescript][JavaScript]] and Common Language Runtime engines. Clojure treats code as data and has a macro system.
 
@@ -900,6 +984,9 @@ The :config keyword specifies code to be executed after the package is loaded. H
 #+end_src
 
 **** TODO Configure Figwheel with Cider ClojureScript REPL
+ - https://github.com/bhauman/lein-figwheel/wiki/Using-the-Figwheel-REPL-within-NRepl
+ Add figwheel-sidecar as a dependency
+
 **** About CIDER
 [[https://github.com/clojure-emacs/cider][CIDER]], formerly nrepl.el, is the *C.lojure I.nteractive D.evelopment E.nvironment* that *R.ocks* for Emacs! It's built on top of nREPL, the Clojure networked REPL server.
 CIDER is an alternative to the deprecated combination of SLIME + swank-clojure.
@@ -1050,6 +1137,7 @@ Need to change .Lein/boot for it to work
 
 *** TODO Open and evaluate 4clojure questions
  - [[https://melpa.org/#/4clojure][Open and evaluate 4clojure.com questions]]
+ - http://www.thattommyhall.com/2012/11/14/solving-4clojure-problems-offline-in-emacs/
 
 *** ON-TRIAL cider-eval-sexp-fu
  - https://github.com/clojure-emacs/cider-eval-sexp-fu
@@ -1098,6 +1186,21 @@ Init.el was changed to a stable release for this.
 
 *** TODO Smart-mode-line
 
+** TODO Emacs Lisp 
+ - https://www.gnu.org/software/emacs/manual/html_mono/eintr.html
+ - http://emacs-doctor.com/learn-emacs-lisp-in-15-minutes.html
+ - http://emacsredux.com/blog/2015/05/16/learning-emacs-lisp/
+
+*** ACCEPTED Bug Hunter
+Use this to correct problems in emacs lisp.
+
+ - https://github.com/Malabarba/elisp-bug-hunter
+
+#+BEGIN_SRC emacs-lisp
+(use-package bug-hunter                 ; Search init file for bugs
+  :ensure t)
+#+END_SRC
+
 ** TODO Java
 Eclim
 eclim is the best solution for now: https://github.com/xiaohanyu/oh-my-emacs/blob/master/modules/ome-java.org
@@ -1115,12 +1218,28 @@ Other options
 
 ** TODO XSLT
 ** TODO Ruby
+** TODO Elixir
+ - https://www.reddit.com/r/emacs/comments/40qyod/alchemist_v17_is_out_elixir_tooling_emacs/
+
 ** TODO ColdFusion
+** TODO Haskell
+ - https://github.com/haskell/haskell-mode/wiki/Haskell-Mode-2015-retrospective
+
 * Databases
 ** ON-TRIAL SQL
  - https://truongtx.me/2014/08/23/setup-emacs-as-an-sql-database-client/
+ - TODO [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-sql.html][SQL Source Code Blocks in Org Mode]] header arguments look useful
+
+
+Required - sqlcmd.exe  for windows
+;; `sqlserver-command-path' (not needn't if `sqlserver-cmd' in under your PATH)
+
+
 
 #+BEGIN_SRC emacs-lisp
+;; extra debugging
+(setq debug-on-error t)
+
 (use-package sql
   :ensure t
   :mode ("\.sql$" . sql-mode))
@@ -1157,7 +1276,7 @@ MongoDb is a NoSQL, document oriented database
 *** TODO How to hide nodes
 
 * Browser integration
-*** ON-TRIAL Engine Mode (search selected text in a browser.)
+*** ACCEPTED <<Engine Mode>> (search selected text in a browser.)
  - https://github.com/hrs/engine-mode
  - [[https://www.youtube.com/watch?v%3DMBhJBMYfWUo][Searching the Web with engine-mode presentation (youtube)]]
 
@@ -1176,7 +1295,8 @@ engine-mode is a global minor mode for Emacs. It enables you to easily define se
   (defengine duckduckgo "https://duckduckgo.com/html/?q=%s"
     :keybinding "d")
 
-  (defengine github "https://github.com/search?ref=simplesearch&q=%s")
+  (defengine github "https://github.com/search?ref=simplesearch&q=%s"
+    :keybinding "G")
 
   (defengine google "https://www.google.com/search?ie=utf-8&oe=utf-8&q=%s"
     :keybinding "g")
@@ -1186,28 +1306,38 @@ engine-mode is a global minor mode for Emacs. It enables you to easily define se
 
   (defengine google-maps "http://maps.google.com/maps?q=%s"
     :keybinding "m"
-    :docstring "Mappin' it up.")
+    :docstring "Searching maps")
 
   (defengine stack-overflow "https://stackoverflow.com/search?q=%s")
   (defengine twitter "https://twitter.com/search?q=%s")
 
   (defengine wikipedia "http://www.wikipedia.org/search-redirect.php?language=en&go=Go&search=%s"
     :keybinding "w"
-    :docstring "Searchin' the wikis.")
+    :docstring "Searching the wikipedia")
 
   (defengine wiktionary "https://www.wikipedia.org/search-redirect.php?family=wiktionary&language=en&go=Go&search=%s")
   (defengine wolfram-alpha "http://www.wolframalpha.com/input/?i=%s")
 
   (defengine youtube "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
     :keybinding "y")
+
   (engine-mode t)
   ))
 #+END_SRC
 
-*** TODO Firefox controller
-https://github.com/cute-jumper/emacs-firefox-controller
-https://www.reddit.com/r/emacs/comments/3w9zg9/an_improved_firefox_controller_for_emacs/
+*** EWW Emacs Web Wowser
+ - https://www.gnu.org/software/emacs/manual/html_mono/eww.html
+ - http://www.emacswiki.org/emacs/eww
 
+*** TODO Firefox 
+ - http://blog.binchen.org/posts/use-firefox-in-emacs-way-3.html (keysnail)
+ - https://github.com/mooz/keysnail
+ - https://addons.mozilla.org/en-GB/firefox/addon/firemacs/
+ - https://github.com/cute-jumper/emacs-firefox-controller
+ - https://www.reddit.com/r/emacs/comments/3w9zg9/an_improved_firefox_controller_for_emacs/
+
+* Mouse
+ - http://www.emacswiki.org/emacs/CategoryMouse
 * To try
 Popular packages: https://emacs.zeef.com/ehartc
 
@@ -1224,19 +1354,50 @@ Popular packages: https://emacs.zeef.com/ehartc
   :diminish (which-key-mode))
 #+END_SRC
 
+** Rebind movement keys
+ - https://www.reddit.com/r/emacs/comments/42n4ma/rebind_your_keys_i_beg_you/
+
 ** TODO Regex search/replace with lisp function
  - https://www.youtube.com/watch?v=5kYu8HYfWm4
  - https://www.masteringemacs.org/article/evaluating-lisp-forms-regular-expressions
 
-** TODO Alerts / Notifications and integrate with Org
+** ON-TRIAL Alerts / Notifications and integrate with Org
  - https://github.com/jwiegley/alert
  - http://www.emacswiki.org/emacs/Alert
  - https://julien.danjou.info/blog/2010/desktop-notification-support-for-Emacs
  - http://emacs.stackexchange.com/questions/3844/good-methods-for-setting-up-alarms-audio-visual-triggered-by-org-mode-events
  - http://sachachua.com/blog/2007/11/setting-up-appointment-reminders-in-org/
 
-** TODO Pomadoro in org mode
+#+BEGIN_SRC emacs-lisp
+(use-package alert
+  :ensure t
+  :commands alert
+  :config
+  (setq alert-default-style 'libnotify))
+#+END_SRC
+
+** ON-TRIAL Pomadoro in org mode
  - http://www.emacswiki.org/emacs/pomodoro
+ - https://github.com/lolownia/org-pomodoro
+ - http://theadmin.org/articles/pomodoro-emacs-with-orgmode/
+
+
+#+BEGIN_SRC emacs-lisp
+(use-package org-pomodoro
+  :pin "melpa"
+  :ensure t
+  :commands org-pomodoro
+  :init
+  (progn
+    (setq org-pomodoro-keep-killed-pomodoro-time t
+          org-pomodoro-sound (expand-file-name (add-to-emacs-d "/sounds/big-singing-bowl.wav"))
+          org-pomodoro-short-break-sound (expand-file-name (add-to-emacs-d "/sounds/big-singing-bowl.wav"))
+          org-pomodoro-long-break-sound (expand-file-name (add-to-emacs-d "/sounds/big-singing-bowl.wav"))
+          org-pomodoro-start-sound (expand-file-name (add-to-emacs-d "/sounds/big-singing-bowl.wav"))
+          org-pomodoro-killed-sound (expand-file-name (add-to-emacs-d "/sounds/big-singing-bowl.wav"))
+          org-pomodoro-start-sound-p t
+          org-pomodoro-time-format "%.2m")))
+#+END_SRC
 
 ** TODO Quelpa
  - https://github.com/quelpa/quelpa
@@ -1246,10 +1407,43 @@ Build and install your Emacs Lisp packages on-the-fly and directly from source
 
 ** TODO Display command-log
 
+** ON-TRIAL Artist Mode
+ - http://patorjk.com/software/taag/#p=display
+ - http://www.cinsk.org/emacs/emacs-artist.html
+
+#+BEGIN_SRC emac-lisp
+(use-package artist
+  :commands (artist-mode)
+  :config
+  (progn
+    (use-package ascii-art-to-unicode
+      :commands (aa2u aa2u-rectangle
+                      aa2u-mark-as-text aa2u-mark-rectangle-as-text)
+      :config
+      (progn
+        (setq aa2u-uniform-weight 'LIGHT)))))
+#+END_SRC
+
 ** TODO Workgroups for Emacs
  - https://github.com/pashinin/workgroups2
+
+** TODO Improve Garbage collection time
+ - https://www.reddit.com/r/emacs/comments/41m7x3/why_are_you_changing_gcconsthreshold/
+ - http://bling.github.io/blog/2016/01/18/why-are-you-changing-gc-cons-threshold/
+
+
+Set it high at the start of your init.
+Set it lower (but still higher than the default) at the end. And hey, presto, normal behavior with no wasted time during init.
+
+There's also gc-cons-percentage which performs a gc if the amount of new memory used as a percentage of the total has increased by a certain amount. If you set gc-cons-threshold to a large number that effectively puts gc-cons-percentage into the driving seat.
+The default gc-cons-threshold is 400000 bytes, not 800000. (Maybe it's been increased in Emacs 25.1 and that's why he wrote that).
+
+** TODO discover.el
+ - https://www.masteringemacs.org/article/discoverel-discover-emacs-context-menus
 ** TODO PDF viewers
  - https://www.reddit.com/r/emacs/comments/3z5ixd/help_viewing_pdfs_in_emacs/
+ - https://github.com/politza/pdf-tools
+ - http://www.dailymotion.com/video/x2bc1is_pdf-tools-tourdeforce_tech?forcedQuality%3Dhd720
 
 *** TODO Linux only
  - https://github.com/politza/pdf-tools
@@ -1272,8 +1466,11 @@ Build and install your Emacs Lisp packages on-the-fly and directly from source
 
 ** TODO Beacon
 [[https://github.com/Malabarba/beacon][Beacon, github]] - A light that follows your cursor around so you don't lose it! (Looks better than it sounds)
+
 ** TODO Encrypt text
-http://www.emacswiki.org/emacs/EasyPG
+ - http://www.emacswiki.org/emacs/EasyPG
+ - https://www.reddit.com/r/emacs/comments/40xq0s/encrypted_backups/
+ - http://www.emacswiki.org/emacs/AutoEncryption
 
 ** TODO RSS
  - https://github.com/skeeto/elfeed
@@ -1286,7 +1483,6 @@ https://github.com/emacs-jp/helm-orgcard
  - http://www.emacswiki.org/emacs/CategoryMail
  - https://www.reddit.com/r/emacs/comments/3rk4cg/emacs_and_email/
  - http://vxlabs.com/2015/01/28/sending-emails-with-math-and-source-code/
- - http://codingquark.com/multiple-email-accounts-in-gnus/
 
 *** mu4e
  - http://www.emacswiki.org/emacs/mu4e
@@ -1295,6 +1491,9 @@ https://github.com/emacs-jp/helm-orgcard
  - https://github.com/emacs-helm/helm-mu
  - http://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
  - https://www.reddit.com/r/emacs/comments/3s5fas/which_email_client_mu4e_mutt_notmuch_gnus_do_you/
+ - http://pragmaticemacs.com/mu4e-tutorials/
+ - http://pragmaticemacs.com/emacs/master-your-inbox-with-mu4e-and-org-mode/
+ - http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
 
 *** Gnus
  - http://www.emacswiki.org/emacs/GnusTutorial
@@ -1303,20 +1502,34 @@ https://github.com/emacs-jp/helm-orgcard
  - https://www.reddit.com/r/emacs/comments/3vonma/gnu_emacs_faq_for_ms_windows_ezwinports/
  - https://www.reddit.com/r/emacs/comments/3wkccd/moving_from_mu4e_to_gnus/
  - https://github.com/redguardtoo/mastering-emacs-in-one-year-guide/blob/master/gnus-guide-en.org
+ - http://codingquark.com/multiple-email-accounts-in-gnus/
+
 ** TODO Presentations
+ - https://github.com/robrohan/bestowed
+ - https://www.youtube.com/watch?v=S0Ley_QoBHo
+ - https://github.com/yjwen/org-reveal
  - [[https://www.youtube.com/watch?v=Ho6nMWGtepY][Writing PPT with org-mode and beamer in Emacs]]
  - Org Present
  - Org Prezzi
+
+** TODO Blogging
+ - http://endlessparentheses.com/how-i-blog-one-year-of-posts-in-a-single-org-file.html
+ - https://www.mfoot.com/blog/2015/11/17/using-org-mode-to-write-jekyll-blogs/
+ - http://pasoev.github.io/programming/2015/10/31/jekyll-posts-emacs-capture/
+
+** TODO Sound
+ - set up ERC so that certain messages were read aloud https://www.reddit.com/r/emacs/comments/40w1xq/erc_messages_read_aloud/
+ - https://www.youtube.com/watch?v=gr1FZ2F7KYA
+
 ** TODO Emoji's
-Could be useful for fitness training
+Could be useful adding icons, such as different activities for fitness training
  - https://github.com/iqbalansari/emacs-emojify
  - https://github.com/syohex/emacs-ac-emoji
  - http://www.lunaryorn.com/2015/08/16/emojis-in-emacs.html
 
 ** TODO Code folding
-[[https://github.com/mrkkrp/vimish-fold/][vimish-fold]] fancier than [[http://www.emacswiki.org/emacs/HideShow][Hide/Show]]
-
-** TODO folds
+ - [[https://github.com/mrkkrp/vimish-fold/][vimish-fold]] fancier than [[http://www.emacswiki.org/emacs/HideShow][Hide/Show]]
+ - https://www.gnu.org/software/emacs/manual/html_node/emacs/Selective-Display.html
 
 ** TODO General Close
  - https://github.com/emacs-berlin/general-close
@@ -1330,12 +1543,30 @@ Also closing must not mean to insert a single character: if behind an "if" in sh
 
 ** TODO Focus
 Focus provides focus-mode that dims the text of surrounding sections, similar to iA Writer's Focus Mode.
-https://github.com/larstvei/Focus/blob/master/README.md
+ - https://github.com/larstvei/Focus/blob/master/README.md
+
+** TODO RESTclient
+ - http://killring.org/2016/01/23/effective-restclient-in-emacs/
 
 ** TODO Crosshairs
+
+** View Large Files in Emacs
+ - https://github.com/m00natic/vlfi
+
+** Automatic resizing of Emacs windows to the golden ratio
+ - https://github.com/roman/golden-ratio.el
+
+** htmlize. Turns your buffer into html.
+** sicp. You can read the classic SICP in emacs info-mode
+** eww. awesome way to view the html version of "Practical common lisp".
+eww. awesome way to view the html version of "Practical common lisp". Combine with rainbow delimiters for a truly awesome read. Open a slime buffer in a split window. You can even eval the text of the book and display it in a clippy popup. This is tech book nirvana. Eww is well known, I don't think many people have discovered how useful it is to read HTML books with a split buffer next to your prog-mode buffer.
+** leerzeichen. Visualize white space with dots, arrows, and dollars.
+** God Mode - Global minor mode for entering Emacs commands without modifier keys
+ - https://github.com/chrisdone/god-mode
 ** TODO cursors mode
 
 ** TODO diff-mode
+ - http://blog.binchen.org/posts/diff-regions-in-emacs.html
 
 ** TODO browser style tabs as an alternative to buffers / elscreen
  - http://emacs.stackexchange.com/questions/10081/browser-style-tabs-for-emacs/10112#10112
@@ -1343,13 +1574,23 @@ https://github.com/larstvei/Focus/blob/master/README.md
  - http://stackoverflow.com/questions/13176843/how-to-put-elscreen-tabs-on-the-top-only
 
 ** TODO cursor-cng
+
+** Unicode fonts
+ - https://github.com/rolandwalker/unicode-fonts
+
 ** TODO dedicated
 ** TODO emacsism
-https://github.com/ChillarAnand/emacsism/blob/master/emacsism.md
+ - https://github.com/ChillarAnand/emacsism/blob/master/emacsism.md
+
 ** TODO Reddit mode
-https://github.com/death/reddit-mode
+ - https://github.com/death/reddit-mode
+
 ** TODO Stack Exchange
  - https://github.com/vermiculus/sx.el
+ - sx. The best way to interact with stackoverlow, stackexchange.
+
+** TODO Stack Overflow
+ - sx. The best way to interact with stackoverlow, stackexchange.
 ** TODO AWS
  - https://github.com/istib/helm-aws
 ** TODO mic-paren or paren
@@ -1378,15 +1619,22 @@ Here are a few:
  - https://github.com/capitaomorte/eslack
 
 ** TODO lua-mode
+
+** TODO emacs user agent
+ - https://www.reddit.com/r/emacs/comments/40sol0/emacs_user_agent/
 ** TODO Spacemacs
  - http://spacemacs.org/
  - https://github.com/syl20bnr/spacemacs
+ - http://www.lunaryorn.com/2016/01/26/why-spacemacs.html
  - http://jr0cket.co.uk/2015/08/spacemacs-first-impressions-from-an-emacs-driven-developer.html
  - https://www.youtube.com/watch?v=ZFV5EqpZ6_s&list=PLrJ2YN5y27KLhd3yNs2dR8_inqtEiEweE
  - http://thume.ca/howto/2015/03/07/configuring-spacemacs-a-tutorial/
  - https://www.reddit.com/r/emacs/comments/3ucnnx/trying_out_spacemacs_without_messing_with_my/
+ - https://github.com/syl20bnr/spacemacs/tree/master/layers/%2Blang/clojure
+
 
 ** TODO [[http://www.emacswiki.org/emacs/MiniMap][MiniMap]]
+ - http://www.emacswiki.org/emacs/MiniMap
 Minimap is a feature provided by the Sublime editor. It shows a smaller, "minibar" display of the current buffer alongside
 the main editing window. In the minibar window, it highlights the portion of the buffer that is currently visible
 in the main window. This highlight position is updated automatically, as you navigate in the main window. You can
@@ -1394,9 +1642,14 @@ scroll the main window by dragging the highlighted area in the minibar.
 You can configure the size/readability of the sidebar freely by specifying the font familiy and height.
 ** TODO Org-mode and Confluence integration
 ** TODO Gists
+** TODO Literate DevOps
+ - http://www.howardism.org/Technical/Emacs/literate-devops.html
+
 ** TODO Jenkins
 https://github.com/rmuslimov/jenkins.el
 ** TODO Jira
+ - http://www.emacswiki.org/emacs/OrgJiraMode
+
 ** TODO Emacs Multimedia
 *** EMMS
 Emacs Multimedia System https://www.gnu.org/software/emms/
@@ -1410,6 +1663,10 @@ Emacs can do everything apparently as these may prove
 http://oremacs.com/2015/01/05/youtube-dl/
 ** TODO Embedding Youtube videos with org-mode links
 http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
+** Transport for London meets Emacs Orgmode
+ - https://github.com/storax/org-tfl
+ - https://github.com/storax/org-tfl#screencast
+
 ** REJECTED Nyan mode
  - What? http://www.nyan.cat/
  - What's that got to do with emacs https://www.youtube.com/watch?v=eWyC6_mzxb4
@@ -1424,23 +1681,34 @@ http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
 ** Make your Emacs sound like a typewriter
 https://github.com/rbanffy/selectric-mode
 
+** Make Stuff happen after you reach a point of ~60wpm
+ - https://github.com/CestDiego/c-c-combo.el
+
 ** Fireplace
  - https://github.com/johanvts/emacs-fireplace/
 
 ** Highlight-tail (draw a colourful tail while you write)
 http://melpa.org/#/highlight-tail
 
-* TODO Org Mode Settings
+* TODO Org Mode
  - [[http://www.star.bris.ac.uk/bjm/org-basics.html]]
  - http://orgmode.org/manual/Speed-keys.html
  - org-mode support for vCard export and import http://stable.melpa.org/#/org-vcard
  - https://www.reddit.com/r/emacs/comments/3ldf6i/org_log_when_something_is_done_with_state_changes/
  - [[https://www.youtube.com/watch?v=gGO4RPzAKQY][Using emacs org mode for fitness]]
  - https://github.com/christopherjwhite/org-toodledo
-
  - http://stackoverflow.com/questions/11143645/emacs-org-mode-how-to-adjust-previous-clock-if-i-forget-to-clock-out
-
  - http://sachachua.com/blog/2007/11/setting-up-appointment-reminders-in-org/
+ - http://www.pygopar.com/creating-and-deploying-org-mode-jekyll-site-to-github-pages/
+ - http://newartisans.com/2007/08/using-org-mode-as-a-day-planner/
+ - https://thraxys.wordpress.com/2016/01/14/pimp-up-your-org-agenda/
+ - https://www.reddit.com/r/emacs/comments/40zrny/pimp_up_your_orgmode_files/
+ - [[http://clubctrl.com/org/prog/howto.html][How to produce nice html docs with Org]]
+ - https://www.reddit.com/r/emacs/comments/41o2xq/quick_intro_to_produce_nice_html_docs_with_org/
+ - http://www.clarkdonley.com/blog/2014-10-26-org-mode-and-writing-papers-some-tips.html
+ - http://nakkaya.com/2010/09/07/writing-papers-using-org-mode/
+ - http://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
+
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package org
@@ -1457,12 +1725,19 @@ http://melpa.org/#/highlight-tail
 ;;     (python . t)
 ;;     (ruby . t)
 ;;     (sh . t))))
+
 #+END_SRC
 
 ** TODO Org-capture
  - http://sachachua.com/blog/2015/11/capturing-links-quickly-with-emacsclient-org-protocol-and-chrome-shortcut-manager-on-microsoft-windows-8/
  - https://github.com/CestDiego/org-capture-chrome
  - http://orgmode.org/worg/org-contrib/org-protocol.html
+
+** TODO GTD and org
+ - http://members.optusnet.com.au/~charles57/GTD/orgmode.html
+ - https://www.reddit.com/r/emacs/comments/2qwh8q/org_mode_one_massive_file_or_tons_of_small_ones/cnacdpl
+ - http://doc.norang.ca/org-mode.html
+
 
 
 ** TODO Add sql and Clojure to the babel support
@@ -1506,6 +1781,9 @@ Look at http://emacs.sexy
 ** TODO Confirm :disabled t keyword in use-package disables configuration
 This is useful so I don't need to comment out code
 and I can keep any rejected config in case it becomes useful in the future.
+* Emacs Configs of other users of note
+ - [[https://github.com/otfrom/otfrom-org-emacs/blob/master/org/config.org][Bruce Durling (London Clojurians)]]
+
 * <<Troubleshooting>>
 ** If there is an error on start up, try "M-x package-refresh-contents" and restart
 ** You may need to restart multiple times for it to clear all the errors
