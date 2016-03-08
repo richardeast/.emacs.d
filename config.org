@@ -19,14 +19,12 @@
 ;;                       |___/            |___/
 #+END_SRC
 
+*Note*: Expect to run *="M-x package-refresh-contents"=* on the first couple of start-ups until it has everything it needs.
+
 Configuration *heavily* inspired by [[https://github.com/danielmai/.emacs.d][Daniel Mai's Emacs Configuration]] and is a [[https://en.wikipedia.org/wiki/Literate_programming][Literate programming]] implimentation of additional per-user Emacs-specific files.
 
-It uses the use-package package/macro that makes the loading of packages more readable. See [[https://www.youtube.com/watch?v=VIuOwIBL-ZU][Overview of Init Files Using Org-Mode and Use-Package]] presentation,
+It uses the "[[https://github.com/jwiegley/use-package][use-package]]" package/macro that makes the loading of packages more readable. See [[https://www.youtube.com/watch?v=VIuOwIBL-ZU][Overview of Init Files Using Org-Mode and Use-Package]] presentation,
 for more advantages and use cases.
-
-See also [[https://github.com/emacs-tw/awesome-emacs][Awesome emacs]] for useful packages.
-
-Note: Expect to run M-x package-refresh-contents on the first couple of start-ups until it has everything it needs.
 
 See [[Troubleshooting]] when things don't work!
 +Tested+ Tried in OSes: Ubuntu 15.10, Windows 7
@@ -64,6 +62,8 @@ The init.el turns this config.org into a config.el, which is loaded on start up.
 ** use-package
 This configuration uses the [[https://github.com/jwiegley/use-package][use-package]] package from John Wiegley, which manages package configurations.
 YouTube presentation - [[https://www.youtube.com/watch?v=2TSKxxYEbII][Emacs package highlight: use-package]].
+ - https://www.masteringemacs.org/article/spotlight-use-package-a-declarative-configuration-tool
+
 #+begin_src emacs-lisp
 ;;; Bootstrap use-package
 ;; Install use-package if it's not already installed.
@@ -145,7 +145,13 @@ Use [[https://en.wikipedia.org/wiki/UTF-8][UTF-8]] character encoding when possi
 ;   (setq x-select-request-type '(UTF8_STRING COMPOUND_TEXT TEXT STRING)))
 #+end_src
 
-** TODO Load sensitive information
+** ON-TRIAL Load sensitive information
+I keep slightly more sensitive information in a separate file so that I can easily publish my main configuration.
+
+#+BEGIN_SRC
+(setq secret-file (add-to-emacs-d "secret/.emacs.secrets.el" t))
+(load secret-file)
+#+END_SRC
 
 * Control the GUI and sound elements
 Including:
@@ -166,7 +172,8 @@ Including:
 ** TODO scroll-bar-mode seems to kill visiblity of the minibuffer commands, such as C-x and M-x :WindowsOS:
 
 * Set Modifier keys, such as Super, Meta, Hyper, Apps per OS
-See [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Define Super & Hyper Keys]] and http://www.emacswiki.org/emacs/PrefixKey for more details and options
+ - [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Define Super & Hyper Keys]] 
+ - http://www.emacswiki.org/emacs/PrefixKey for more details and options
 
 ** Guide to Prefixes
 |-----+---------------------------|
@@ -185,6 +192,8 @@ See [[http://ergoemacs.org/emacs/emacs_hyper_super_keys.html][Emacs: How to Defi
 
 
 ** Windows
+ - https://www.reddit.com/r/emacs/comments/46tbcb/superhyper_key_in_windows_10/ Problems with Super in Windows 10
+
 Make keyboard's Windows key type act as Super modifier.
 Single tap Windows key still brings up Start menu.
 Window shortcut keys should still work too.
@@ -293,10 +302,12 @@ A quick way to jump around text in buffers.
   :ensure t
   :diminish ace-jump-mode
   :commands ace-jump-mode
-  :bind ("C-S-s" . ace-jump-mode))
-
+  :bind (("C-S-s" . ace-jump-mode)
+         ("s-s" . ace-jump-mode)))
 #+END_SRC
 
+** TODO Add Multiple Cursors with Ace Jump
+ - https://github.com/mm--/ace-mc
 ** ACCEPTED Helm
  - http://tuhdo.github.io/helm-intro.html
  - [[https://github.com/emacs-helm/helm/wiki][https://github.com/emacs-helm/helm/wiki]]
@@ -332,6 +343,17 @@ A quick way to jump around text in buffers.
          ("C-x c SPC" . helm-all-mark-rings)))
 #+END_SRC
 
+
+** ON-TRIAL Automatic resizing of Emacs windows to the golden ratio
+ - https://github.com/roman/golden-ratio.el
+#+BEGIN_SRC emacs-lisp
+(use-package golden-ratio
+  :ensure t
+  :diminish golden-ratio-mode
+  :init
+  (golden-ratio-mode 1)
+  (setq golden-ratio-auto-scale t))
+#+END_SRC
 ** ON-TRIAL Projectile
 [[http://batsov.com/projectile/][Projectile Home]]
 "[[http://wikemacs.org/wiki/Projectile][Projectile]] is project interaction library for Emacs. Its goal is to provide a nice set of features operating on a project level without introducing external dependencies."
@@ -433,7 +455,10 @@ Reader Clement pointed out that my previous advice to use C-SPACE to continue cy
  - [[https://www.youtube.com/watch?v=VvnJQpTFVDc][Swiper Screen cast]]
  - http://blog.binchen.org/posts/hello-ivy-mode-bye-helm.html
  - https://www.reddit.com/r/emacs/comments/41dt4d/how_hard_itd_be_to_migrate_a_helm_to_ivy/
+ - http://pragmaticemacs.com/emacs/open-a-recent-directory-in-dired-revisited/
 
+** TODO Move to next buffer
+ - [[https://www.reddit.com/r/emacs/comments/43g9tc/move_to_the_next_or_previous_buffer/][Move to the next or previous buffer]]
 
 ** REJECTED [[http://www.gnu.org/software/emacs/manual/html_node/speedbar/][Speedbar]]
 An alternative to [[NeoTree]]
@@ -451,6 +476,7 @@ Speedbar opens in another Frame.
 
 * Themes
  - Check [[http://pawelbx.github.io/emacs-theme-gallery/][Emacs Theme Gallery]] for themes to suit your needs.
+ - [[http://themegallery.robdor.com/][Spacemacs Themes]]
  - https://www.reddit.com/r/emacs/comments/3oc7jk/nice_emacs_themes_with_a_limited_number_of_colors/
  - http://mswift42.github.io/themecreator/
  - https://github.com/mswift42/themecreator
@@ -461,10 +487,22 @@ and to transfer such collections from one computer to another.
 A Custom theme is stored as an Emacs Lisp source file. If the name of the Custom theme is name, the theme file is named name-theme.el.
 See [[http://www.gnu.org/software/emacs/manual/html_node/emacs/Creating-Custom-Themes.html][Creating Custom Themes]], for the format of a theme file and how to make one.
 
+** ON-TRIAL Mode-line Theme
+ - https://github.com/TheBB/spaceline
+ - https://github.com/Malabarba/smart-mode-line alternative
+ - https://github.com/jonathanchu/emacs-powerline alternative
+ - http://emacs.stackexchange.com/questions/281/how-do-i-get-a-fancier-mode-line-that-uses-solid-colors-and-triangles
+
+#+BEGIN_SRC emacs-lisp
+(use-package spaceline-config
+:ensure spaceline
+:config
+(spaceline-emacs-theme))
+#+END_SRC
+
 ** Theme-Creator
  - http://emacs-theme-creator.appspot.com/
  - http://mswift42.github.io/theme-creator/
-
 ** Set the location for the themes
 This is a folder where all themes can be stored.
 #+BEGIN_SRC emacs-lisp
@@ -697,6 +735,7 @@ The snippet syntax is inspired from TextMate's syntax, you cyas-san even import 
 [[http://magit.vc/about.html][Magit]] is an interface to the [[https://en.wikipedia.org/wiki/Version_control][version control system]] [[http://git-scm.com/][Git]].
 
  - https://github.com/magit/magit/wiki/Pushing-with-Magit-from-Windows
+ - [[https://www.youtube.com/watch?v%3DLDafmAJa-4w][Emacs Tutorial - Introduction to Magit]] (youtube)
  - https://www.reddit.com/r/emacs/comments/3yww3r/magit_help_pushingpulling_just_hang_with_no/
 
 #+BEGIN_SRC emacs-lisp
@@ -738,8 +777,15 @@ or learn to use help more efficiently
 *** TODO dired+
  - http://pragmaticemacs.com/emacs/open-recent-directories-in-dired/
 
+*** TODO Dynamically filter directory listing with dired-narrow
+ - http://pragmaticemacs.com/emacs/dynamically-filter-directory-listing-with-dired-narrow/
+
 *** TODO dired-hacks
  - https://github.com/Fuco1/dired-hacks
+
+*** TODO Open with
+ - [[https://www.reddit.com/r/emacs/comments/43tb4u/minor_extension_for_emacsdiredmacosxfinder/][Open with for Dired]]
+
 ** TODO <<Sunrise Commander>>
 A file manager inspired by [[https://en.wikipedia.org/wiki/Norton_Commander][Norton Commander]] and [[https://en.wikipedia.org/wiki/Midnight_Commander][Mignight Commander]].
  - http://www.emacswiki.org/emacs/Sunrise_Commander
@@ -815,7 +861,8 @@ uppercase) part of a nomenclature is called a `subword'. Here are some examples:
 )
 #+END_SRC
 
-** TODO paredit
+** ON-TRIAL paredit
+
 #+BEGIN_QUOTE
 "[[https://twitter.com/kentbeck/status/311983951218630656][I'm ready to try an editor that only allows]] [[https://en.wikipedia.org/wiki/Abstract_syntax_tree][AST]] transformations" -- [[https://en.wikipedia.org/wiki/Kent_Beck][Kent Beck]]
 
@@ -827,7 +874,22 @@ uppercase) part of a nomenclature is called a `subword'. Here are some examples:
  - http://overtone.github.io/emacs-live/doc-clojure-paredit.html
  - [[http://www.emacswiki.org/emacs/PareditCheatsheet][Paredit Cheatsheet]]
  - [[http://danmidwood.com/content/2014/11/21/animated-paredit.html][The Animated Guide to Paredit]]
- - [[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands]]
+ - [[http://mumble.net/~campbell/emacs/paredit.html][Basic Insertion Commands
+]]
+#+BEGIN_SRC emac-lisp
+(use-package paredit
+  :diminish paredit-mode
+  :init
+  (add-hook 'clojure-mode-hook 'enable-paredit-mode)
+  (add-hook 'cider-repl-mode-hook 'enable-paredit-mode)
+  (add-hook 'lisp-mode-hook 'enable-paredit-mode)
+  (add-hook 'emacs-lisp-mode-hook 'enable-paredit-mode)
+  (add-hook 'lisp-interaction-mode-hook 'enable-paredit-mode)
+  (add-hook 'ielm-mode-hook 'enable-paredit-mode)
+  (add-hook 'json-mode-hook 'enable-paredit-mode))
+#+END_SRC
+
+
 ** TODO Smartparens
  - https://github.com/Fuco1/smartparens/wiki/Paredit-and-smartparens
  - [[https://www.youtube.com/watch?v%3DykjRUr7FgoI][Smartparens - smart editing of paired expressions 1 of 2]]
@@ -931,6 +993,7 @@ It runs on the Java Virtual Machine, [[https://github.com/clojure/clojurescript]
          ("\.boot$"     . clojure-mode)
          ("\.cljs\.hl$" . clojure-mode))
   :init (progn
+         (add-hook 'clojure-mode-hook #'paredit-mode)
          (add-hook 'clojure-mode-hook #'rainbow-delimiters-mode)
 ;;         (add-hook 'clojure-mode-hook #'subword-mode)
          (add-hook 'clojure-mode-hook #'yas-minor-mode)
@@ -986,6 +1049,9 @@ The :config keyword specifies code to be executed after the package is loaded. H
 **** TODO Configure Figwheel with Cider ClojureScript REPL
  - https://github.com/bhauman/lein-figwheel/wiki/Using-the-Figwheel-REPL-within-NRepl
  Add figwheel-sidecar as a dependency
+
+**** TODO CIDER overlays
+ - [[https://github.com/clojure-emacs/cider/blob/master/cider-overlays.el][cider-overlays.el - see if you can work out how to use them.]]
 
 **** About CIDER
 [[https://github.com/clojure-emacs/cider][CIDER]], formerly nrepl.el, is the *C.lojure I.nteractive D.evelopment E.nvironment* that *R.ocks* for Emacs! It's built on top of nREPL, the Clojure networked REPL server.
@@ -1057,6 +1123,9 @@ Some features:
 | t and M-.            |                             | Jump to test definition.                                                   |
 | d                    |                             | Display diff of actual vs expected.                                        |
 | e                    |                             | Display test error cause and stacktrace info.                              |
+| C-c C-t              |                             | New test commands keymap                                                      |
+| C-c C-t l            |                             | Run all loaded tests                                                       |
+| C-c c-t p            |                             | Run all project tests                                                      |
 |----------------------+-----------------------------+----------------------------------------------------------------------------|
 | Other Useful Tools   |                             |                                                                            |
 |----------------------+-----------------------------+----------------------------------------------------------------------------|
@@ -1243,6 +1312,23 @@ Required - sqlcmd.exe  for windows
 (use-package sql
   :ensure t
   :mode ("\.sql$" . sql-mode))
+
+
+(setq sql-ms-login-params
+      '((user :default "eastric")
+        (database :default "HullandBack2015!")
+        (server :default "IDV-DEV-DB0l\\SQLEXPRESS")
+        (port :default 1433)))
+
+
+;; (setq sqlserver-connection-info
+;;       '((username . "eastric")
+;;         (password . "HullandBack2015!")
+;;         (server-instance . "IDV-DEV-DB01")
+;;         (dbname . "icd_corporate")))
+
+(setq sqlserver-cmd' 'sqlcmd)
+
 #+END_SRC
 
 ** TODO MongoDB
@@ -1321,6 +1407,22 @@ engine-mode is a global minor mode for Emacs. It enables you to easily define se
   (defengine youtube "http://www.youtube.com/results?aq=f&oq=&search_query=%s"
     :keybinding "y")
 
+
+
+(defvar confluence-url "https://confluence.uk.experian.local/dosearchsite.action?queryString=%s")
+(defvar jira-url "http://idv-dev-src01/jira/browse/%s")
+  ;;Internal Jira Server. Do not share this engine
+  (if (boundp 'jira-url)
+    (defengine jira jira-url
+      :keybinding "j"
+      :docstring "Getting single Jira issue"))
+
+  ;;Internal Confluence Server. Do not share this engine
+  (if (boundp 'confluence-url)
+    (defengine confluence confluence-url
+      :keybinding "c"
+      :docstring "Searching for item in Confluence"))
+
   (engine-mode t)
   ))
 #+END_SRC
@@ -1340,6 +1442,7 @@ engine-mode is a global minor mode for Emacs. It enables you to easily define se
  - http://www.emacswiki.org/emacs/CategoryMouse
 * To try
 Popular packages: https://emacs.zeef.com/ehartc
+See also [[https://github.com/emacs-tw/awesome-emacs][Awesome emacs]] for useful packages.
 
 ** ON-TRIAL Which-key
  Displays available key bindings in pop-up
@@ -1354,8 +1457,23 @@ Popular packages: https://emacs.zeef.com/ehartc
   :diminish (which-key-mode))
 #+END_SRC
 
-** Rebind movement keys
- - https://www.reddit.com/r/emacs/comments/42n4ma/rebind_your_keys_i_beg_you/
+** TODO M-x cider-drink-a-sip
+** ON-TRIAL Artist Mode
+ - http://patorjk.com/software/taag/#p=display
+ - http://www.cinsk.org/emacs/emacs-artist.html
+
+#+BEGIN_SRC emacs-lisp
+(use-package artist
+  :commands (artist-mode)
+  :config
+  (progn
+    (use-package ascii-art-to-unicode
+      :commands (aa2u aa2u-rectangle
+                      aa2u-mark-as-text aa2u-mark-rectangle-as-text)
+      :config
+      (progn
+        (setq aa2u-uniform-weight 'LIGHT)))))
+#+END_SRC
 
 ** TODO Regex search/replace with lisp function
  - https://www.youtube.com/watch?v=5kYu8HYfWm4
@@ -1405,24 +1523,11 @@ Popular packages: https://emacs.zeef.com/ehartc
 
 Build and install your Emacs Lisp packages on-the-fly and directly from source
 
+** TODO Eurgonomics
+ - http://cute-jumper.github.io/emacs/2016/02/22/my-simple-setup-to-avoid-rsi-in-emacs
 ** TODO Display command-log
-
-** ON-TRIAL Artist Mode
- - http://patorjk.com/software/taag/#p=display
- - http://www.cinsk.org/emacs/emacs-artist.html
-
-#+BEGIN_SRC emac-lisp
-(use-package artist
-  :commands (artist-mode)
-  :config
-  (progn
-    (use-package ascii-art-to-unicode
-      :commands (aa2u aa2u-rectangle
-                      aa2u-mark-as-text aa2u-mark-rectangle-as-text)
-      :config
-      (progn
-        (setq aa2u-uniform-weight 'LIGHT)))))
-#+END_SRC
+** TODO Rebind movement keys
+ - https://www.reddit.com/r/emacs/comments/42n4ma/rebind_your_keys_i_beg_you/
 
 ** TODO Workgroups for Emacs
  - https://github.com/pashinin/workgroups2
@@ -1440,6 +1545,8 @@ The default gc-cons-threshold is 400000 bytes, not 800000. (Maybe it's been incr
 
 ** TODO discover.el
  - https://www.masteringemacs.org/article/discoverel-discover-emacs-context-menus
+** TODO Games 
+ - [[https://www.youtube.com/watch?v=gk39mp8Vy4M][Writing Games with Emacs]] (youtube)
 ** TODO PDF viewers
  - https://www.reddit.com/r/emacs/comments/3z5ixd/help_viewing_pdfs_in_emacs/
  - https://github.com/politza/pdf-tools
@@ -1476,6 +1583,7 @@ The default gc-cons-threshold is 400000 bytes, not 800000. (Maybe it's been incr
  - https://github.com/skeeto/elfeed
  - [[http://nullprogram.com/blog/2015/12/03/][9 Elfeed Features You Might Not Know]]
  - https://github.com/algernon/elfeed-goodies
+ - [[https://www.youtube.com/watch?v=t8LOGxYB6xg][RSS in GNUs]]
 
 ** TODO Helm Orgcard
 https://github.com/emacs-jp/helm-orgcard
@@ -1488,12 +1596,15 @@ https://github.com/emacs-jp/helm-orgcard
  - http://www.emacswiki.org/emacs/mu4e
  - https://github.com/iqbalansari/mu4e-alert
  - http://emacs-fu.blogspot.co.uk/2012/08/introducing-mu4e-for-email.html
+ - http://prodissues.com/2016/02/adding-mu4e-support-to-emacs.html
  - https://github.com/emacs-helm/helm-mu
  - http://www.djcbsoftware.nl/code/mu/mu4e/Gmail-configuration.html#Gmail-configuration
  - https://www.reddit.com/r/emacs/comments/3s5fas/which_email_client_mu4e_mutt_notmuch_gnus_do_you/
+ - http://prodissues.com/2016/02/emacs-gpg-for-dummies.html
  - http://pragmaticemacs.com/mu4e-tutorials/
  - http://pragmaticemacs.com/emacs/master-your-inbox-with-mu4e-and-org-mode/
  - http://pragmaticemacs.com/emacs/email-templates-in-mu4e-with-yasnippet/
+ - http://pragmaticemacs.com/emacs/email-attachment-reminders-in-mu4e/
 
 *** Gnus
  - http://www.emacswiki.org/emacs/GnusTutorial
@@ -1516,6 +1627,10 @@ https://github.com/emacs-jp/helm-orgcard
  - http://endlessparentheses.com/how-i-blog-one-year-of-posts-in-a-single-org-file.html
  - https://www.mfoot.com/blog/2015/11/17/using-org-mode-to-write-jekyll-blogs/
  - http://pasoev.github.io/programming/2015/10/31/jekyll-posts-emacs-capture/
+ - [[https://ogbe.net/blog/blogging_with_org.html][Blogging using org-mode (and nothing else)]]
+
+** TODO screenwriting environment
+ - https://github.com/rnkn/fountain-mode
 
 ** TODO Sound
  - set up ERC so that certain messages were read aloud https://www.reddit.com/r/emacs/comments/40w1xq/erc_messages_read_aloud/
@@ -1553,14 +1668,14 @@ Focus provides focus-mode that dims the text of surrounding sections, similar to
 ** View Large Files in Emacs
  - https://github.com/m00natic/vlfi
 
-** Automatic resizing of Emacs windows to the golden ratio
- - https://github.com/roman/golden-ratio.el
 
 ** htmlize. Turns your buffer into html.
 ** sicp. You can read the classic SICP in emacs info-mode
 ** eww. awesome way to view the html version of "Practical common lisp".
 eww. awesome way to view the html version of "Practical common lisp". Combine with rainbow delimiters for a truly awesome read. Open a slime buffer in a split window. You can even eval the text of the book and display it in a clippy popup. This is tech book nirvana. Eww is well known, I don't think many people have discovered how useful it is to read HTML books with a split buffer next to your prog-mode buffer.
 ** leerzeichen. Visualize white space with dots, arrows, and dollars.
+** TODO Lint prose
+ - http://unconj.ca/blog/linting-prose-in-emacs.html
 ** God Mode - Global minor mode for entering Emacs commands without modifier keys
  - https://github.com/chrisdone/god-mode
 ** TODO cursors mode
@@ -1678,6 +1793,8 @@ http://endlessparentheses.com/embedding-youtube-videos-with-org-mode-links.html
 ;; (use-package nyan-mode :init (nyan-mode 1))
 #+END_SRC
 
+** QR codes
+ - https://github.com/syohex/emacs-qrencode
 ** Make your Emacs sound like a typewriter
 https://github.com/rbanffy/selectric-mode
 
@@ -1708,7 +1825,8 @@ http://melpa.org/#/highlight-tail
  - http://www.clarkdonley.com/blog/2014-10-26-org-mode-and-writing-papers-some-tips.html
  - http://nakkaya.com/2010/09/07/writing-papers-using-org-mode/
  - http://katherine.cox-buday.com/blog/2015/03/14/writing-specs-with-org-mode/
-
+ - [[https://www.reddit.com/r/emacs/comments/43vfl1/enable_wordwrap_in_orgmode/][Enable wordwrap in Org mode]]
+ - [[http://orgmode.org/worg/org-contrib/babel/languages/ob-doc-sql.html][SQL Source Code Blocks in Org Mode]]
 
 #+BEGIN_SRC emacs-lisp
 ;;(use-package org
@@ -1724,9 +1842,17 @@ http://melpa.org/#/highlight-tail
 ;;     (emacs-lisp . t)
 ;;     (python . t)
 ;;     (ruby . t)
+;;     (sql . t)
 ;;     (sh . t))))
 
+(add-hook 'org-mode-hook #'toggle-word-wrap)
+
 #+END_SRC
+
+
+
+** TODO MobileOrg
+ - https://github.com/wizmer/mobileorg-android
 
 ** TODO Org-capture
  - http://sachachua.com/blog/2015/11/capturing-links-quickly-with-emacsclient-org-protocol-and-chrome-shortcut-manager-on-microsoft-windows-8/
